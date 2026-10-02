@@ -1,0 +1,17 @@
+# The core and the Symfony adapter. Needs Symfony and Doctrine: see scripts/install-symfony.sh.
+includes:
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src/Core
+        - src/Symfony
+        - tests/Core
+        - tests/Support
+        - tests/Symfony
+    tmpDir: build/phpstan-symfony
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true

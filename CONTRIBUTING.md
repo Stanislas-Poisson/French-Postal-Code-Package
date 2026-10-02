@@ -27,6 +27,8 @@ composer analyse:laravel
 git checkout composer.json && composer install    # back to the plain package
 ```
 
+The Symfony adapter works the same way, with `scripts/install-symfony.sh 6.4|7.4|8.0`, `composer test:symfony` and `composer analyse:symfony`. Symfony 8 needs PHP 8.4. Do not install both frameworks in the same `vendor`.
+
 ## Rules
 
 - `declare(strict_types=1)`, `final` classes and explicit types. PHPStan runs at the maximum level with no ignored error.

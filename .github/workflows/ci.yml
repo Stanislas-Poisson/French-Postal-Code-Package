@@ -113,11 +113,48 @@ jobs:
       - name: Keep the coverage of src/Laravel at 100 %
         run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
 
+  # Symfony 8 needs PHP 8.4. Doctrine ORM 3 with DBAL 4 everywhere.
+  symfony:
+    name: Symfony ${{ matrix.symfony }} (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.2', symfony: '6.4' }
+          - { php: '8.3', symfony: '6.4' }
+          - { php: '8.4', symfony: '6.4' }
+          - { php: '8.2', symfony: '7.4' }
+          - { php: '8.3', symfony: '7.4' }
+          - { php: '8.4', symfony: '7.4' }
+          - { php: '8.4', symfony: '8.0' }
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+
+      - name: Install Symfony ${{ matrix.symfony }}
+        run: |
+          composer install --no-interaction --prefer-dist
+          scripts/install-symfony.sh ${{ matrix.symfony }}
+
+      - name: Static analysis
+        run: composer analyse:symfony
+
+      - name: Run the tests
+        run: vendor/bin/phpunit --configuration=phpunit.symfony.xml --colors=never --coverage-text | tee coverage.txt
+
+      - name: Keep the coverage of src/Symfony at 100 %
+        run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
+
   # The only check required by the branch protection: it fails when any job above failed or was skipped.
   ci:
     name: ci
     runs-on: ubuntu-latest
-    needs: [quality, docs, security, test, laravel]
+    needs: [quality, docs, security, test, laravel, symfony]
     if: always()
     steps:
       - name: Every job passed
