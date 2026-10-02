@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Code style and static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer cs
+      - run: composer analyse
+
+  docs:
+    name: Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: npx --yes markdownlint-cli2 "**/*.md" "#vendor" "#node_modules"
+
+  security:
+    name: Dependencies audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer audit
+
+  test:
+    name: Tests (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+
+      - run: composer install --no-interaction --prefer-dist
+
+      - name: Run the tests
+        run: vendor/bin/phpunit --colors=never --coverage-text | tee coverage.txt
+
+      - name: Keep the coverage of src/ at 100 %
+        run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
+
+  # The only check required by the branch protection: it fails when any job above failed or was skipped.
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    needs: [quality, docs, security, test]
+    if: always()
+    steps:
+      - name: Every job passed
+        run: |
+          echo '${{ toJSON(needs) }}'
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

@@ -1,0 +1,75 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "stanislas-poisson/french-postal-code",
+    "description": "The regions, departments, communes and postal codes of France, with one GPS point per postal code: the data, the models and a loader for Laravel and Symfony.",
+    "type": "library",
+    "keywords": [
+        "france",
+        "postal-code",
+        "insee",
+        "gps",
+        "geocoding",
+        "open-data",
+        "dataset",
+        "communes",
+        "laravel",
+        "symfony",
+        "doctrine",
+        "eloquent"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package",
+    "authors": [
+        {
+            "name": "Stanislas Poisson",
+            "homepage": "https://github.com/Stanislas-Poisson",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package/issues",
+        "source": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package",
+        "docs": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package#readme",
+        "security": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package/security/policy"
+    },
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.5"
+    },
+    "suggest": {
+        "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
+        "symfony/framework-bundle": "Doctrine entities and console command (6.4 or 7.x)",
+        "doctrine/orm": "Needed by the Symfony adapter (3.x)"
+    },
+    "conflict": {
+        "laravel/framework": "<11.0",
+        "symfony/framework-bundle": "<6.4",
+        "doctrine/orm": "<3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "StanislasPoisson\\FrenchPostalCode\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "StanislasPoisson\\FrenchPostalCode\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "cs": "pint --test",
+        "cs:fix": "pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

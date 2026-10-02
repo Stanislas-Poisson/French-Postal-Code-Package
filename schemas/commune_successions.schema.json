@@ -1,0 +1,65 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "name": "commune_successions",
+  "title": "Commune code successions",
+  "description": "For an old INSEE code, the code that follows it, the kind of change and its date.",
+  "version": "4.0.0",
+  "missingValues": [
+    ""
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "Stable identifier of the row, never reused. It is the target of the foreign keys of an application.",
+      "type": "integer",
+      "constraints": {
+        "required": true,
+        "minimum": 1
+      }
+    },
+    {
+      "name": "from_code",
+      "description": "INSEE code of the commune that changes or disappears.",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^([0-9]{5}|2[AB][0-9]{3})$"
+      }
+    },
+    {
+      "name": "to_code",
+      "description": "INSEE code that follows it. Empty when the commune disappears without a successor.",
+      "type": "string",
+      "constraints": {
+        "pattern": "^([0-9]{5}|2[AB][0-9]{3})$"
+      }
+    },
+    {
+      "name": "kind",
+      "description": "absorbed, code_reused, deleted, renamed, replaced or split.",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "enum": [
+          "absorbed",
+          "code_reused",
+          "deleted",
+          "renamed",
+          "replaced",
+          "split"
+        ]
+      }
+    },
+    {
+      "name": "effective_date",
+      "description": "Date of effect of the change (YYYY-MM-DD).",
+      "type": "date",
+      "constraints": {
+        "required": true
+      }
+    }
+  ],
+  "primaryKey": [
+    "id"
+  ]
+}

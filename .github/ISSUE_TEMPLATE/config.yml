@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A wrong or missing value in the data
+    url: https://github.com/Stanislas-Poisson/French-Postal-Code/issues/new/choose
+    about: The data is built in the French-Postal-Code repository. Please report it there.
+  - name: Report a security vulnerability
+    url: https://github.com/Stanislas-Poisson/French-Postal-Code-Package/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.

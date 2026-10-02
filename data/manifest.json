@@ -1,0 +1,72 @@
+{
+    "generated_at": "2026-10-02",
+    "cog_vintage": "2026",
+    "laposte_version": "2026-10",
+    "tables": {
+        "regions": {
+            "rows": 18,
+            "columns": [
+                "id",
+                "code",
+                "name",
+                "slug",
+                "valid_from",
+                "valid_to"
+            ]
+        },
+        "departments": {
+            "rows": 110,
+            "columns": [
+                "id",
+                "region_id",
+                "code",
+                "type",
+                "name",
+                "slug",
+                "valid_from",
+                "valid_to"
+            ]
+        },
+        "communes": {
+            "rows": 41027,
+            "columns": [
+                "id",
+                "department_id",
+                "insee_code",
+                "kind",
+                "name",
+                "slug",
+                "centre_latitude",
+                "centre_longitude",
+                "valid_from",
+                "valid_to"
+            ]
+        },
+        "cities": {
+            "rows": 35510,
+            "columns": [
+                "id",
+                "commune_id",
+                "postal_code",
+                "label",
+                "latitude",
+                "longitude",
+                "address_count",
+                "coordinate_source",
+                "valid_from",
+                "valid_to",
+                "replaced_by_city_id"
+            ]
+        },
+        "commune_successions": {
+            "rows": 8480,
+            "columns": [
+                "id",
+                "from_code",
+                "to_code",
+                "kind",
+                "effective_date"
+            ]
+        }
+    }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "name": "communes",
+  "title": "Communes",
+  "description": "The communes and the municipal arrondissements (Paris, Lyon, Marseille), closed ones included.",
+  "version": "4.0.0",
+  "missingValues": [
+    ""
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "Stable identifier of the row, never reused. It is the target of the foreign keys of an application.",
+      "type": "integer",
+      "constraints": {
+        "required": true,
+        "minimum": 1
+      }
+    },
+    {
+      "name": "department_id",
+      "description": "Identifier of the department. Empty for a closed commune whose department no longer exists.",
+      "type": "integer",
+      "constraints": {
+        "minimum": 1
+      }
+    },
+    {
+      "name": "insee_code",
+      "description": "INSEE code of the commune, five characters (2A or 2B for Corsica).",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^([0-9]{5}|2[AB][0-9]{3})$"
+      }
+    },
+    {
+      "name": "kind",
+      "description": "COM for a commune, ARM for a municipal arrondissement.",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "enum": [
+          "COM",
+          "ARM"
+        ]
+      }
+    },
+    {
+      "name": "name",
+      "description": "Name of the commune.",
+      "type": "string",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "slug",
+      "description": "Name in lower case without accents, words separated by hyphens.",
+      "type": "string",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "centre_latitude",
+      "description": "Latitude of the centre of the commune, in decimal degrees (WGS 84).",
+      "type": "number",
+      "constraints": {
+        "minimum": -90,
+        "maximum": 90
+      }
+    },
+    {
+      "name": "centre_longitude",
+      "description": "Longitude of the centre of the commune, in decimal degrees (WGS 84).",
+      "type": "number",
+      "constraints": {
+        "minimum": -180,
+        "maximum": 180
+      }
+    },
+    {
+      "name": "valid_from",
+      "description": "First day of validity of the row (YYYY-MM-DD).",
+      "type": "date",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "valid_to",
+      "description": "Last day of validity of the row (YYYY-MM-DD). Empty while the row is valid: a row is never deleted, its validity is closed.",
+      "type": "date"
+    }
+  ],
+  "primaryKey": [
+    "id"
+  ]
+}

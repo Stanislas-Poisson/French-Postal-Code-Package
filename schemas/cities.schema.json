@@ -1,0 +1,107 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "name": "cities",
+  "title": "Cities (commune and postal code)",
+  "description": "One row per commune and per postal code, with its GPS point. The table to reference by a foreign key.",
+  "version": "4.0.0",
+  "missingValues": [
+    ""
+  ],
+  "fields": [
+    {
+      "name": "id",
+      "description": "Stable identifier of the row, never reused. It is the target of the foreign keys of an application.",
+      "type": "integer",
+      "constraints": {
+        "required": true,
+        "minimum": 1
+      }
+    },
+    {
+      "name": "commune_id",
+      "description": "Identifier of the commune.",
+      "type": "integer",
+      "constraints": {
+        "required": true,
+        "minimum": 1
+      }
+    },
+    {
+      "name": "postal_code",
+      "description": "Postal code, five digits.",
+      "type": "string",
+      "constraints": {
+        "required": true,
+        "pattern": "^[0-9]{5}$"
+      }
+    },
+    {
+      "name": "label",
+      "description": "Delivery label of La Poste for this postal code.",
+      "type": "string"
+    },
+    {
+      "name": "latitude",
+      "description": "Latitude of the GPS point, in decimal degrees (WGS 84).",
+      "type": "number",
+      "constraints": {
+        "minimum": -90,
+        "maximum": 90
+      }
+    },
+    {
+      "name": "longitude",
+      "description": "Longitude of the GPS point, in decimal degrees (WGS 84).",
+      "type": "number",
+      "constraints": {
+        "minimum": -180,
+        "maximum": 180
+      }
+    },
+    {
+      "name": "address_count",
+      "description": "Number of addresses of the Base Adresse Nationale used to compute the point. 0 when the point does not come from it.",
+      "type": "integer",
+      "constraints": {
+        "required": true,
+        "minimum": 0
+      }
+    },
+    {
+      "name": "coordinate_source",
+      "description": "Origin of the point: ban, nominatim or commune_centre.",
+      "type": "string",
+      "constraints": {
+        "enum": [
+          "ban",
+          "nominatim",
+          "commune_centre"
+        ]
+      }
+    },
+    {
+      "name": "valid_from",
+      "description": "First day of validity of the row (YYYY-MM-DD).",
+      "type": "date",
+      "constraints": {
+        "required": true
+      }
+    },
+    {
+      "name": "valid_to",
+      "description": "Last day of validity of the row (YYYY-MM-DD). Empty while the row is valid: a row is never deleted, its validity is closed.",
+      "type": "date"
+    },
+    {
+      "name": "replaced_by_city_id",
+      "description": "Identifier of the city that replaces this one once its validity is closed. Empty otherwise.",
+      "type": "integer",
+      "constraints": {
+        "minimum": 1
+      }
+    }
+  ],
+  "primaryKey": [
+    "id"
+  ]
+}
