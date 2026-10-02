@@ -150,11 +150,64 @@ jobs:
       - name: Keep the coverage of src/Symfony at 100 %
         run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
 
+  # The adapters on a real server: SQLite hides what MySQL, MariaDB and PostgreSQL refuse (see tests/Support/TestDatabase.php).
+  full-data:
+    name: ${{ matrix.framework.name }} on ${{ matrix.database.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        framework:
+          - { name: Laravel 13, install: 'install-laravel.sh 13', config: phpunit.laravel.xml }
+          - { name: Symfony 7.4, install: 'install-symfony.sh 7.4', config: phpunit.symfony.xml }
+        database:
+          - { name: MySQL 8.4, driver: mysql, image: 'mysql:8.4', port: 3306, user: root, health: 'mysqladmin ping -h 127.0.0.1 -psecret' }
+          - { name: MariaDB 11, driver: mariadb, image: 'mariadb:11', port: 3306, user: root, health: 'healthcheck.sh --connect --innodb_initialized' }
+          - { name: PostgreSQL 17, driver: pgsql, image: 'postgres:17', port: 5432, user: postgres, health: 'pg_isready -U postgres' }
+    services:
+      database:
+        image: ${{ matrix.database.image }}
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: french_postal_code
+          MARIADB_ROOT_PASSWORD: secret
+          MARIADB_DATABASE: french_postal_code
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: french_postal_code
+        ports:
+          - ${{ matrix.database.port }}:${{ matrix.database.port }}
+        options: >-
+          --health-cmd="${{ matrix.database.health }}"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      TEST_DB: ${{ matrix.database.driver }}
+      TEST_DB_PORT: ${{ matrix.database.port }}
+      TEST_DB_USER: ${{ matrix.database.user }}
+      TEST_DB_PASSWORD: secret
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, pdo_pgsql
+          coverage: none
+
+      - name: Install ${{ matrix.framework.name }}
+        run: |
+          composer install --no-interaction --prefer-dist
+          scripts/${{ matrix.framework.install }}
+
+      - name: Run the tests
+        run: vendor/bin/phpunit --configuration=${{ matrix.framework.config }} --colors=never
+
   # The only check required by the branch protection: it fails when any job above failed or was skipped.
   ci:
     name: ci
     runs-on: ubuntu-latest
-    needs: [quality, docs, security, test, laravel, symfony]
+    needs: [quality, docs, security, test, laravel, symfony, full-data]
     if: always()
     steps:
       - name: Every job passed

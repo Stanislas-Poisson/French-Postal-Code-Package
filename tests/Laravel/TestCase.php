@@ -9,9 +9,27 @@ use Illuminate\Testing\PendingCommand;
 use LogicException;
 use Orchestra\Testbench\TestCase as Orchestra;
 use StanislasPoisson\FrenchPostalCode\Laravel\FrenchPostalCodeServiceProvider;
+use StanislasPoisson\FrenchPostalCode\Tests\Support\TestDatabase;
 
 abstract class TestCase extends Orchestra
 {
+    private const CONNECTIONS = ['testing', 'second'];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // A server keeps its tables from one test to the next, SQLite in memory does not.
+        if (! TestDatabase::isSqlite()) {
+            foreach (self::CONNECTIONS as $connection) {
+                $this->command('db:wipe', ['--database' => $connection])->run();
+
+                // The command disconnects the connection, and a schema builder cannot reopen it by itself.
+                $this->app?->make('db')->purge($connection);
+            }
+        }
+    }
+
     /**
      * @param array<string, mixed> $parameters
      */
@@ -33,14 +51,8 @@ abstract class TestCase extends Orchestra
     {
         $app['config']->set('database.default', 'testing');
 
-        foreach (['testing', 'second'] as $connection) {
-            // Foreign keys are enforced, as on MySQL and PostgreSQL.
-            $app['config']->set('database.connections.' . $connection, [
-                'driver'                  => 'sqlite',
-                'database'                => ':memory:',
-                'prefix'                  => '',
-                'foreign_key_constraints' => true,
-            ]);
+        foreach (self::CONNECTIONS as $connection) {
+            $app['config']->set('database.connections.' . $connection, TestDatabase::laravel());
         }
     }
 

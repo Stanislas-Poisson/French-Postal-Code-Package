@@ -8,6 +8,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\Test;
+use StanislasPoisson\FrenchPostalCode\Tests\Support\TestDatabase;
 
 final class MigrationTest extends TestCase
 {
@@ -31,7 +32,11 @@ final class MigrationTest extends TestCase
         $this->migrate();
 
         $this->assertTrue(Schema::connection('second')->hasTable('french_cities'));
-        $this->assertFalse(Schema::connection('testing')->hasTable('french_cities'));
+
+        // On a server, both connections of the tests lead to the same database.
+        if (TestDatabase::isSqlite()) {
+            $this->assertFalse(Schema::connection('testing')->hasTable('french_cities'));
+        }
     }
 
     #[Test]
