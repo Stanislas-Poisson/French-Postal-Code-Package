@@ -16,7 +16,7 @@ A Composer package that gives an application the French administrative areas and
 
 The data comes from the [French-Postal-Code][builder] project, which builds it from the official open sources (INSEE, La Poste, the Base Adresse Nationale) and publishes it on [data.gouv.fr][data-gouv].
 
-> **Status: in development.** The data, its reader and their checks are in place. The Laravel and Symfony adapters come next. The package is not on Packagist yet.
+> **Status: in development.** The data, its reader, the loader and the **Laravel adapter** are in place. The Symfony adapter comes next. The package is not on Packagist yet.
 
 ## Why a package
 
@@ -51,6 +51,62 @@ foreach ($dataset->chunks('cities', 1000) as $rows) {
 
 The reader streams the files and checks them against the manifest: a truncated or altered file is an error, never a silent partial load.
 
+## Laravel
+
+```bash
+composer require stanislas-poisson/french-postal-code
+php artisan migrate
+php artisan french-postal-code:load
+```
+
+`migrate` creates the tables, `french-postal-code:load` fills them. The command can be run again at any time: it adds the new rows, updates the others and deletes nothing, so it is also how you take a new version of the data.
+
+The models are in `StanislasPoisson\FrenchPostalCode\Laravel\Models`: `Region`, `Department`, `Commune`, `City` and `CommuneSuccession`, with their relations.
+
+```php
+use StanislasPoisson\FrenchPostalCode\Laravel\Models\City;
+
+$city = City::query()->where('postal_code', '37200')->firstOrFail();
+
+$city->commune->name;                        // Tours
+$city->commune->department->region->name;    // Centre-Val de Loire
+City::query()->current()->count();           // only the rows that are valid today
+```
+
+An application points to a postal entry with a foreign key to `french_cities`:
+
+```php
+// In a migration of your application
+$table->foreignId('city_id')->constrained('french_cities');
+
+// In your model
+public function city(): BelongsTo
+{
+    return $this->belongsTo(City::class);
+}
+```
+
+### Configuration
+
+Many applications already own a `cities` or a `regions` table, so the tables of the package are prefixed. Both settings can be set in the environment, or in the configuration file published with `php artisan vendor:publish --tag=french-postal-code-config`:
+
+| Setting | Environment variable | Default |
+| :--- | :--- | :--- |
+| `table_prefix` | `FRENCH_POSTAL_CODE_TABLE_PREFIX` | `french_` (an empty value gives `regions`, `cities`...) |
+| `connection` | `FRENCH_POSTAL_CODE_CONNECTION` | the default connection |
+
+Set them **before** running `php artisan migrate`.
+
+### Compatibility
+
+| | Supported |
+| :--- | :--- |
+| PHP | 8.2, 8.3, 8.4 |
+| Laravel | 11 and 12 (PHP 8.2 or more), 13 (PHP 8.3 or more) |
+| Databases | Those Laravel supports, with the foreign keys enforced |
+
+Laravel 11 no longer receives security fixes, so Composer refuses to install it unless you accept its advisories; the adapter is tested on it nonetheless.
+
 ## Updating the data
 
 The files of `data/` are never edited by hand. They are the package archive of a release of the builder:
@@ -70,7 +126,7 @@ The version of the package follows [SemVer][semver]. A new dataset without chang
 
 ```bash
 make install
-make test        # PHPUnit
+make test        # PHPUnit: the reader and the loader
 make quality     # Pint and PHPStan at the maximum level
 ```
 

@@ -16,6 +16,17 @@ Thank you for helping. The sections below describe the workflow of this reposito
 
 A pull request needs a review and a green `ci` check, and is merged with a merge commit.
 
+## Testing an adapter
+
+The frameworks are not in `composer.json`: Laravel and Symfony do not share compatible versions of their components, so each CI job installs only its own. To test the Laravel adapter against one major version of Laravel:
+
+```bash
+scripts/install-laravel.sh 12      # 11, 12 or 13
+composer test:laravel
+composer analyse:laravel
+git checkout composer.json && composer install    # back to the plain package
+```
+
 ## Rules
 
 - `declare(strict_types=1)`, `final` classes and explicit types. PHPStan runs at the maximum level with no ignored error.

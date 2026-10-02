@@ -46,7 +46,7 @@ jobs:
       - run: composer audit
 
   test:
-    name: Tests (PHP ${{ matrix.php }})
+    name: Core (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -65,14 +65,59 @@ jobs:
       - name: Run the tests
         run: vendor/bin/phpunit --colors=never --coverage-text | tee coverage.txt
 
-      - name: Keep the coverage of src/ at 100 %
+      - name: Keep the coverage of src/Core at 100 %
+        run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
+
+  # The frameworks are not in composer.json: each job installs only its own (see scripts/install-laravel.sh).
+  # Laravel 13 needs PHP 8.3 or more.
+  laravel:
+    name: Laravel ${{ matrix.laravel }} (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.2', laravel: '11' }
+          - { php: '8.2', laravel: '12' }
+          - { php: '8.3', laravel: '11' }
+          - { php: '8.3', laravel: '12' }
+          - { php: '8.3', laravel: '13' }
+          - { php: '8.4', laravel: '11' }
+          - { php: '8.4', laravel: '12' }
+          - { php: '8.4', laravel: '13' }
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: pcov
+
+      # Every release of Laravel 11 is flagged by a security advisory, so Composer refuses to install it by default.
+      # The adapter is still tested on it, since it declares to support it.
+      - name: Allow Laravel 11, which is no longer maintained
+        if: matrix.laravel == '11'
+        run: composer config audit.block-insecure false
+
+      - name: Install Laravel ${{ matrix.laravel }}
+        run: |
+          composer install --no-interaction --prefer-dist
+          scripts/install-laravel.sh ${{ matrix.laravel }}
+
+      - name: Static analysis
+        run: composer analyse:laravel
+
+      - name: Run the tests
+        run: vendor/bin/phpunit --configuration=phpunit.laravel.xml --colors=never --coverage-text | tee coverage.txt
+
+      - name: Keep the coverage of src/Laravel at 100 %
         run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
 
   # The only check required by the branch protection: it fails when any job above failed or was skipped.
   ci:
     name: ci
     runs-on: ubuntu-latest
-    needs: [quality, docs, security, test]
+    needs: [quality, docs, security, test, laravel]
     if: always()
     steps:
       - name: Every job passed

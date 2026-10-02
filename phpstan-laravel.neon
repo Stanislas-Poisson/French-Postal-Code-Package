@@ -1,0 +1,14 @@
+# The whole package, including the Laravel adapter. Needs Laravel and Larastan: see scripts/install-laravel.sh.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+        - tests
+    tmpDir: build/phpstan-laravel
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true

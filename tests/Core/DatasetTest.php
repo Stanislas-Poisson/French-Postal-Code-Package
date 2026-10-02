@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StanislasPoisson\FrenchPostalCode\Tests;
+namespace StanislasPoisson\FrenchPostalCode\Tests\Core;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
@@ -13,6 +13,14 @@ use StanislasPoisson\FrenchPostalCode\Tests\Support\TemporaryDataset;
 
 final class DatasetTest extends TestCase
 {
+    #[Test]
+    public function a_schema_without_fields_gives_no_type(): void
+    {
+        $temporaryDataset = TemporaryDataset::minimal()->write('regions.schema.json', '{}');
+
+        $this->assertSame([], (new Dataset($temporaryDataset->directory, $temporaryDataset->directory))->types('regions'));
+    }
+
     #[Test]
     public function it_gives_the_path_of_the_file_of_a_table(): void
     {
@@ -26,6 +34,17 @@ final class DatasetTest extends TestCase
 
         $this->assertSame(['id', 'code', 'name', 'slug', 'valid_from', 'valid_to'], $dataset->columns('regions'));
         $this->assertSame(18, $dataset->count('regions'));
+    }
+
+    #[Test]
+    public function it_knows_the_type_of_each_column_from_the_schema(): void
+    {
+        $types = (new Dataset)->types('cities');
+
+        $this->assertSame('integer', $types['id']);
+        $this->assertSame('number', $types['latitude']);
+        $this->assertSame('string', $types['postal_code']);
+        $this->assertSame('date', $types['valid_from']);
     }
 
     #[Test]
@@ -147,6 +166,17 @@ final class DatasetTest extends TestCase
     }
 
     #[Test]
+    public function it_refuses_a_schema_that_is_not_json(): void
+    {
+        $temporaryDataset = TemporaryDataset::minimal()->write('regions.schema.json', '{not json');
+
+        $this->expectException(DatasetException::class);
+        $this->expectExceptionMessage('the schema of "regions" is invalid');
+
+        (new Dataset($temporaryDataset->directory, $temporaryDataset->directory))->types('regions');
+    }
+
+    #[Test]
     public function it_refuses_a_table_whose_file_is_missing(): void
     {
         $temporaryDataset = (new TemporaryDataset)->manifest(['regions' => ['rows' => 1, 'columns' => ['id']]]);
@@ -155,6 +185,17 @@ final class DatasetTest extends TestCase
         $this->expectExceptionMessage('regions.csv" cannot be read');
 
         iterator_to_array((new Dataset($temporaryDataset->directory))->rows('regions'));
+    }
+
+    #[Test]
+    public function it_refuses_a_table_without_schema(): void
+    {
+        $temporaryDataset = TemporaryDataset::minimal();
+
+        $this->expectException(DatasetException::class);
+        $this->expectExceptionMessage('regions.schema.json" cannot be read');
+
+        (new Dataset($temporaryDataset->directory, $temporaryDataset->directory))->types('regions');
     }
 
     #[Test]

@@ -64,12 +64,21 @@
         "test": "phpunit",
         "analyse": "phpstan analyse --memory-limit=1G",
         "cs": "pint --test",
-        "cs:fix": "pint"
+        "cs:fix": "pint",
+        "test:laravel": "phpunit --configuration=phpunit.laravel.xml",
+        "analyse:laravel": "phpstan analyse --configuration=phpstan-laravel.neon --memory-limit=1G"
     },
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "StanislasPoisson\\FrenchPostalCode\\Laravel\\FrenchPostalCodeServiceProvider"
+            ]
+        }
+    }
 }
