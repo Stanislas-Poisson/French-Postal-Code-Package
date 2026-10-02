@@ -16,3 +16,4 @@
 /phpunit.symfony.xml export-ignore
 /phpstan-symfony.neon export-ignore
 /pint.json     export-ignore
+/.markdownlint.json export-ignore
