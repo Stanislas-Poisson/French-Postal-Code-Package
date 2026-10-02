@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StanislasPoisson\FrenchPostalCode\Tests;
+namespace StanislasPoisson\FrenchPostalCode\Tests\Core;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

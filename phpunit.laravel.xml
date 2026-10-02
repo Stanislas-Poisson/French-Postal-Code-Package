@@ -5,15 +5,15 @@
          colors="true"
          failOnRisky="true"
          failOnWarning="true"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache/laravel">
     <testsuites>
-        <testsuite name="core">
-            <directory>tests/Core</directory>
+        <testsuite name="laravel">
+            <directory>tests/Laravel</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
-            <directory>src/Core</directory>
+            <directory>src/Laravel</directory>
         </include>
     </source>
 </phpunit>

@@ -1,0 +1,83 @@
+name: Release
+
+# A tag X.Y.Z on main publishes the release. Packagist reads the tags of the repository by itself.
+on:
+  push:
+    tags: ['[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  PACKAGE: stanislas-poisson/french-postal-code
+
+jobs:
+  release:
+    name: Publish the release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Check the tag is on main
+        run: |
+          git fetch --quiet origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::The tag $GITHUB_REF_NAME is not on main: a release is made from main only."
+            exit 1
+          fi
+
+      - name: Check the CI passed on the tagged commit
+        run: |
+          for attempt in $(seq 1 40); do
+            conclusion=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs?per_page=100" \
+              --jq '[.check_runs[] | select(.name == "ci")] | first | .conclusion // "missing"')
+
+            case "$conclusion" in
+              success) echo "The CI passed."; exit 0 ;;
+              missing|null) echo "The CI has not finished ($attempt/40), waiting." ;;
+              *) echo "::error::The CI of $GITHUB_SHA ended with: $conclusion."; exit 1 ;;
+            esac
+
+            sleep 30
+          done
+
+          echo "::error::The CI of $GITHUB_SHA did not finish in 20 minutes."
+          exit 1
+
+      - name: Create the release
+        run: |
+          minor="${GITHUB_REF_NAME%.*}"
+
+          cat > notes.md <<NOTES
+          \`\`\`bash
+          composer require $PACKAGE:^$minor
+          \`\`\`
+
+          Package: https://packagist.org/packages/$PACKAGE
+
+          NOTES
+
+          gh release create "$GITHUB_REF_NAME" \
+            --verify-tag \
+            --title "French Postal Code $GITHUB_REF_NAME" \
+            --notes-file notes.md \
+            --generate-notes
+
+      - name: Check Packagist has the version
+        run: |
+          for attempt in $(seq 1 20); do
+            if curl -fsS "https://repo.packagist.org/p2/$PACKAGE.json" \
+              | jq -e --arg package "$PACKAGE" --arg version "$GITHUB_REF_NAME" '.packages[$package][]? | select(.version == $version)' >/dev/null; then
+              echo "Packagist has $GITHUB_REF_NAME."
+              exit 0
+            fi
+
+            echo "Packagist does not have $GITHUB_REF_NAME yet ($attempt/20)."
+            sleep 30
+          done
+
+          # A warning, not a failure: the release exists, and the package may not be submitted to Packagist yet.
+          echo "::warning::Packagist does not list $GITHUB_REF_NAME for $PACKAGE. Submit the package, or check its GitHub hook."

@@ -1,10 +1,10 @@
+# The core alone: runs without any framework installed.
+includes:
+    - phpstan-common.neon
+
 parameters:
-    level: max
     paths:
-        - src
-        - tests
+        - src/Core
+        - tests/Core
+        - tests/Support
     tmpDir: build/phpstan
-    checkMissingCallableSignature: true
-    checkTooWideReturnTypesInProtectedAndPublicMethods: true
-    checkUninitializedProperties: true
-    reportUnmatchedIgnoredErrors: true

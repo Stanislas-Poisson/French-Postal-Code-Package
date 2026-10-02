@@ -5,15 +5,15 @@
          colors="true"
          failOnRisky="true"
          failOnWarning="true"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache/symfony">
     <testsuites>
-        <testsuite name="core">
-            <directory>tests/Core</directory>
+        <testsuite name="symfony">
+            <directory>tests/Symfony</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
-            <directory>src/Core</directory>
+            <directory>src/Symfony</directory>
         </include>
     </source>
 </phpunit>

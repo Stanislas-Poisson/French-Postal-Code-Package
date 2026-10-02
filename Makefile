@@ -9,8 +9,16 @@ install: ## Install the dependencies
 	composer install --no-interaction --prefer-dist
 
 .PHONY: test
-test: ## Run the tests
+test: ## Run the tests of the reader and the loader
 	vendor/bin/phpunit
+
+.PHONY: test-laravel
+test-laravel: ## Test the Laravel adapter, after scripts/install-laravel.sh 12
+	vendor/bin/phpunit --configuration=phpunit.laravel.xml
+
+.PHONY: test-symfony
+test-symfony: ## Test the Symfony adapter, after scripts/install-symfony.sh 7.4
+	vendor/bin/phpunit --configuration=phpunit.symfony.xml
 
 .PHONY: coverage
 coverage: ## Run the tests with the coverage of src/

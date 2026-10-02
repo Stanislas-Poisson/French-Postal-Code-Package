@@ -1,0 +1,7 @@
+# The rules shared by every PHPStan configuration of the package.
+parameters:
+    level: max
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true

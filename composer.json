@@ -42,13 +42,16 @@
     },
     "suggest": {
         "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
-        "symfony/framework-bundle": "Doctrine entities and console command (6.4 or 7.x)",
-        "doctrine/orm": "Needed by the Symfony adapter (3.x)"
+        "symfony/framework-bundle": "Doctrine entities and console command (6.4, 7.4 or 8)",
+        "doctrine/orm": "Needed by the Symfony adapter (3.x, with DBAL 4)",
+        "doctrine/doctrine-bundle": "Needed by the Symfony adapter",
+        "symfony/var-exporter": "Needed by Doctrine ORM to load a relation on demand, below PHP 8.4"
     },
     "conflict": {
         "laravel/framework": "<11.0",
         "symfony/framework-bundle": "<6.4",
-        "doctrine/orm": "<3.0"
+        "doctrine/orm": "<3.0",
+        "doctrine/dbal": "<4.0"
     },
     "autoload": {
         "psr-4": {
@@ -64,12 +67,23 @@
         "test": "phpunit",
         "analyse": "phpstan analyse --memory-limit=1G",
         "cs": "pint --test",
-        "cs:fix": "pint"
+        "cs:fix": "pint",
+        "test:laravel": "phpunit --configuration=phpunit.laravel.xml",
+        "analyse:laravel": "phpstan analyse --configuration=phpstan-laravel.neon --memory-limit=1G",
+        "test:symfony": "phpunit --configuration=phpunit.symfony.xml",
+        "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G"
     },
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "laravel": {
+            "providers": [
+                "StanislasPoisson\\FrenchPostalCode\\Laravel\\FrenchPostalCodeServiceProvider"
+            ]
+        }
+    }
 }
