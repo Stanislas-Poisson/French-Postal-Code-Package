@@ -1,9 +1,9 @@
 # The core and the Laravel adapter. Needs Laravel and Larastan: see scripts/install-laravel.sh.
 includes:
+    - phpstan-common.neon
     - vendor/larastan/larastan/extension.neon
 
 parameters:
-    level: max
     paths:
         - src/Core
         - src/Laravel
@@ -11,7 +11,3 @@ parameters:
         - tests/Support
         - tests/Laravel
     tmpDir: build/phpstan-laravel
-    checkMissingCallableSignature: true
-    checkTooWideReturnTypesInProtectedAndPublicMethods: true
-    checkUninitializedProperties: true
-    reportUnmatchedIgnoredErrors: true
