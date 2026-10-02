@@ -9,6 +9,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use LogicException;
 use StanislasPoisson\FrenchPostalCode\Core\Dataset;
 use StanislasPoisson\FrenchPostalCode\Core\RowWriter;
+use StanislasPoisson\FrenchPostalCode\Tests\Support\TestDatabase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -40,9 +41,17 @@ abstract class SymfonyTestCase extends KernelTestCase
     protected function createTables(): void
     {
         $entityManager = $this->entityManager();
-        $entityManager->getConnection()->executeStatement('PRAGMA foreign_keys = ON');
+        $schemaTool    = new SchemaTool($entityManager);
 
-        (new SchemaTool($entityManager))->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
+        if (TestDatabase::isSqlite()) {
+            $entityManager->getConnection()->executeStatement('PRAGMA foreign_keys = ON');
+        }
+        else {
+            // A server keeps its tables from one test to the next, SQLite in memory does not.
+            $schemaTool->dropDatabase();
+        }
+
+        $schemaTool->createSchema($entityManager->getMetadataFactory()->getAllMetadata());
     }
 
     protected function dataset(): Dataset

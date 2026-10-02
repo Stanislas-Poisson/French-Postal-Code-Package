@@ -7,6 +7,7 @@ namespace StanislasPoisson\FrenchPostalCode\Tests\Symfony;
 use Composer\InstalledVersions;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use StanislasPoisson\FrenchPostalCode\Symfony\FrenchPostalCodeBundle;
+use StanislasPoisson\FrenchPostalCode\Tests\Support\TestDatabase;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -55,7 +56,7 @@ final class TestKernel extends Kernel
         }
 
         $containerConfigurator->extension('doctrine', [
-            'dbal' => ['driver' => 'pdo_sqlite', 'memory' => true],
+            'dbal' => ['connections' => ['default' => TestDatabase::doctrine()]],
             'orm'  => $orm,
         ]);
 
