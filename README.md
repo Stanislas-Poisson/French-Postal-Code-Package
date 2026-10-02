@@ -169,6 +169,36 @@ Many applications already own a `cities` or a `regions` table, so the tables of 
 
 Below PHP 8.4, Doctrine ORM needs `symfony/var-exporter` to load a relation on demand; a Symfony application with Doctrine has it already.
 
+## Keeping a reference up to date
+
+A row is never deleted. When a commune merges or a postal code changes, the old `City` is closed (`valid_to` is set) and points to the one that replaces it, so your foreign key keeps working and always leads to a row that exists. After loading a new version of the data, you can move the references that lead to a closed city.
+
+Laravel:
+
+```php
+// In your model: the closed city knows its replacement
+$address->city->replacedBy;   // City or null
+
+// Move every address that leads to a closed city to its replacement
+Address::query()
+    ->whereIn('city_id', City::query()->whereNotNull('replaced_by_city_id')->select('id'))
+    ->update(['city_id' => City::query()->select('replaced_by_city_id')->whereColumn('french_cities.id', 'addresses.city_id')]);
+```
+
+Symfony:
+
+```php
+$address->getCity()->getReplacedBy();   // City or null
+
+// The same move, in SQL: adapt the names of your table and of the tables of the package (prefix included)
+$entityManager->getConnection()->executeStatement(
+    'UPDATE addresses SET city_id = (SELECT c.replaced_by_city_id FROM french_cities c WHERE c.id = addresses.city_id)
+     WHERE city_id IN (SELECT id FROM french_cities WHERE replaced_by_city_id IS NOT NULL)'
+);
+```
+
+A replacement can itself be replaced later: run the update again until it changes nothing, or follow `replacedBy` in a loop. For the old INSEE codes of a commune, `commune_successions` gives the commune or communes that replace it, with the date and the kind of change.
+
 ## Updating the data
 
 The files of `data/` are never edited by hand. They are the package archive of a release of the builder:
