@@ -1,8 +1,9 @@
 parameters:
     level: max
     paths:
-        - src
-        - tests
+        - src/Core
+        - tests/Core
+        - tests/Support
     tmpDir: build/phpstan
     checkMissingCallableSignature: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true

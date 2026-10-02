@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace StanislasPoisson\FrenchPostalCode\Tests;
+namespace StanislasPoisson\FrenchPostalCode\Tests\Core;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -71,7 +71,7 @@ final class SchemaTest extends TestCase
     private function schema(string $table): array
     {
         /** @var array{fields: list<array{name: string, type: string, constraints?: array<string, mixed>}>} $schema */
-        $schema = json_decode((string) file_get_contents(__DIR__ . '/../schemas/' . $table . '.schema.json'), true, 512, JSON_THROW_ON_ERROR);
+        $schema = json_decode((string) file_get_contents(__DIR__ . '/../../schemas/' . $table . '.schema.json'), true, 512, JSON_THROW_ON_ERROR);
 
         return $schema;
     }

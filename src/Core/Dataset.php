@@ -27,7 +27,10 @@ final class Dataset
      */
     private ?array $manifest = null;
 
-    public function __construct(private readonly string $directory = __DIR__ . '/../../data') {}
+    public function __construct(
+        private readonly string $directory = __DIR__ . '/../../data',
+        private readonly string $schemas = __DIR__ . '/../../schemas',
+    ) {}
 
     /**
      * The rows of a table, in blocks, for the loaders that write them in several statements.
@@ -139,6 +142,39 @@ final class Dataset
     public function tables(): array
     {
         return self::TABLES;
+    }
+
+    /**
+     * The Table Schema type of each column of a table (`integer`, `number`, `date` or `string`).
+     *
+     * @return array<string, string>
+     */
+    public function types(string $table): array
+    {
+        $this->describe($table);
+
+        $path = $this->schemas . '/' . $table . '.schema.json';
+        $json = @file_get_contents($path);
+
+        if (false === $json) {
+            throw DatasetException::missingFile($path);
+        }
+
+        try {
+            /** @var array{fields?: list<array{name: string, type: string}>} $schema */
+            $schema = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        }
+        catch (JsonException $jsonException) {
+            throw DatasetException::invalidManifest('the schema of "' . $table . '" is invalid: ' . $jsonException->getMessage());
+        }
+
+        $types = [];
+
+        foreach ($schema['fields'] ?? [] as $field) {
+            $types[$field['name']] = $field['type'];
+        }
+
+        return $types;
     }
 
     /**
