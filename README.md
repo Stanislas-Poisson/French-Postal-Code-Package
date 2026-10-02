@@ -4,6 +4,7 @@
 
 **The regions, departments, communes and postal codes of France, with one GPS point per postal code, in your own database.**
 
+[![Packagist][badge-packagist]][packagist]
 [![CI][badge-ci]][ci]
 [![License: MIT][badge-license]][license]
 [![PHP 8.2+][badge-php]][composer]
@@ -15,8 +16,6 @@
 A Composer package that gives an application the French administrative areas and postal codes as **data**, **models with their relations** and a **command that loads them** into its database. It is built to work with **Laravel** (Eloquent) and **Symfony** (Doctrine), and its core needs no framework.
 
 The data comes from the [French-Postal-Code][builder] project, which builds it from the official open sources (INSEE, La Poste, the Base Adresse Nationale) and publishes it on [data.gouv.fr][data-gouv].
-
-> **Status: in development.** The data, its reader, the loader and the **Laravel** and **Symfony** adapters are in place. The package is not on Packagist yet.
 
 ## Why a package
 
@@ -228,10 +227,12 @@ See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code o
 
 [MIT][license] for the code. The data stays subject to the licences of its sources, see the [builder][builder].
 
+[badge-packagist]: https://img.shields.io/packagist/v/stanislas-poisson/french-postal-code?style=flat-square&logo=packagist&logoColor=white&label=packagist
 [badge-ci]: https://img.shields.io/github/actions/workflow/status/Stanislas-Poisson/French-Postal-Code-Package/ci.yml?branch=main&label=ci&style=flat-square&logo=githubactions&logoColor=white
 [badge-license]: https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square
 [badge-php]: https://img.shields.io/badge/php-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white
 [builder]: https://github.com/Stanislas-Poisson/French-Postal-Code
+[packagist]: https://packagist.org/packages/stanislas-poisson/french-postal-code
 [ci]: https://github.com/Stanislas-Poisson/French-Postal-Code-Package/actions/workflows/ci.yml
 [composer]: composer.json
 [conduct]: CODE_OF_CONDUCT.md
