@@ -9,7 +9,10 @@
 /.gitignore    export-ignore
 /Makefile      export-ignore
 /phpstan.neon  export-ignore
+/phpstan-common.neon export-ignore
 /phpunit.xml   export-ignore
 /phpunit.laravel.xml export-ignore
 /phpstan-laravel.neon export-ignore
+/phpunit.symfony.xml export-ignore
+/phpstan-symfony.neon export-ignore
 /pint.json     export-ignore

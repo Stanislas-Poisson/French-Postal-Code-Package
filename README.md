@@ -16,7 +16,7 @@ A Composer package that gives an application the French administrative areas and
 
 The data comes from the [French-Postal-Code][builder] project, which builds it from the official open sources (INSEE, La Poste, the Base Adresse Nationale) and publishes it on [data.gouv.fr][data-gouv].
 
-> **Status: in development.** The data, its reader, the loader and the **Laravel adapter** are in place. The Symfony adapter comes next. The package is not on Packagist yet.
+> **Status: in development.** The data, its reader, the loader and the **Laravel** and **Symfony** adapters are in place. The package is not on Packagist yet.
 
 ## Why a package
 
@@ -107,6 +107,68 @@ Set them **before** running `php artisan migrate`.
 
 Laravel 11 no longer receives security fixes, so Composer refuses to install it unless you accept its advisories; the adapter is tested on it nonetheless.
 
+## Symfony
+
+```bash
+composer require stanislas-poisson/french-postal-code
+```
+
+Register the bundle in `config/bundles.php`:
+
+```php
+StanislasPoisson\FrenchPostalCode\Symfony\FrenchPostalCodeBundle::class => ['all' => true],
+```
+
+Create the tables with your usual Doctrine tooling, then load the data:
+
+```bash
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
+php bin/console french-postal-code:load
+```
+
+The entities are mapped for you, so the migration your application generates contains the five tables, with their foreign keys. `french-postal-code:load` can be run again at any time: it adds the new rows, updates the others and deletes nothing, so it is also how you take a new version of the data.
+
+The entities are in `StanislasPoisson\FrenchPostalCode\Symfony\Entity`: `Region`, `Department`, `Commune`, `City` and `CommuneSuccession`, with their relations and read-only accessors. The repositories add `current()`, a query builder on the rows that are valid today.
+
+```php
+use StanislasPoisson\FrenchPostalCode\Symfony\Entity\City;
+
+$city = $entityManager->getRepository(City::class)->findOneBy(['postalCode' => '37200']);
+
+$city->getCommune()->getName();                                // Tours
+$city->getCommune()->getDepartment()?->getRegion()?->getName(); // Centre-Val de Loire
+```
+
+An application points to a postal entry with a relation to `City`:
+
+```php
+#[ORM\ManyToOne(targetEntity: City::class)]
+#[ORM\JoinColumn(nullable: false)]
+private City $city;
+```
+
+### Configuration
+
+```yaml
+# config/packages/french_postal_code.yaml
+french_postal_code:
+    table_prefix: french_   # an empty value gives "regions", "cities"...
+```
+
+Many applications already own a `cities` or a `regions` table, so the tables of the package are prefixed. Set it **before** generating the migration. The entities live in the **default entity manager**, on its connection.
+
+### Compatibility
+
+| | Supported |
+| :--- | :--- |
+| PHP | 8.2, 8.3, 8.4 |
+| Symfony | 6.4 and 7.4 (PHP 8.2 or more), 8.0 (PHP 8.4) |
+| Doctrine | ORM 3 with DBAL 4, and DoctrineBundle 2 (Symfony 6.4 and 7) or 3 (Symfony 8) |
+| Databases | MySQL, MariaDB, PostgreSQL and SQLite |
+
+Below PHP 8.4, Doctrine ORM needs `symfony/var-exporter` to load a relation on demand; a Symfony application with Doctrine has it already.
+
 ## Updating the data
 
 The files of `data/` are never edited by hand. They are the package archive of a release of the builder:
@@ -126,7 +188,7 @@ The version of the package follows [SemVer][semver]. A new dataset without chang
 
 ```bash
 make install
-make test        # PHPUnit: the reader and the loader
+make test        # PHPUnit: the reader and the loader (see CONTRIBUTING.md for the adapters)
 make quality     # Pint and PHPStan at the maximum level
 ```
 
