@@ -35,6 +35,9 @@ final readonly class TablePrefixListener
             return;
         }
 
-        $classMetadata->setPrimaryTable([...$classMetadata->table, 'name' => $this->prefix . $classMetadata->getTableName()]);
+        $classMetadata->setPrimaryTable([
+            ...$classMetadata->table,
+            'name' => $this->prefix . $classMetadata->getTableName(),
+        ]);
     }
 }

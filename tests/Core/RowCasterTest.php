@@ -16,8 +16,8 @@ final class RowCasterTest extends TestCase
     {
         $loadReport = new LoadReport(['regions' => ['rows' => 18, 'added' => 18], 'cities' => ['rows' => 10, 'added' => 2]]);
 
-        $this->assertSame(28, $loadReport->rows());
-        $this->assertSame(20, $loadReport->added());
+        self::assertSame(28, $loadReport->rows());
+        self::assertSame(20, $loadReport->added());
     }
 
     #[Test]
@@ -28,6 +28,6 @@ final class RowCasterTest extends TestCase
             ['id' => 'integer', 'latitude' => 'number', 'postal_code' => 'string', 'valid_from' => 'date', 'valid_to' => 'date'],
         );
 
-        $this->assertSame(['id' => 12, 'latitude' => 46.5, 'postal_code' => '01400', 'valid_from' => '2026-01-01', 'valid_to' => null, 'other' => '7'], $cast);
+        self::assertSame(['id' => 12, 'latitude' => 46.5, 'postal_code' => '01400', 'valid_from' => '2026-01-01', 'valid_to' => null, 'other' => '7'], $cast);
     }
 }

@@ -18,13 +18,13 @@ final class DatasetTest extends TestCase
     {
         $temporaryDataset = TemporaryDataset::minimal()->write('regions.schema.json', '{}');
 
-        $this->assertSame([], (new Dataset($temporaryDataset->directory, $temporaryDataset->directory))->types('regions'));
+        self::assertSame([], (new Dataset($temporaryDataset->directory, $temporaryDataset->directory))->types('regions'));
     }
 
     #[Test]
     public function it_gives_the_path_of_the_file_of_a_table(): void
     {
-        $this->assertFileExists((new Dataset)->path('cities'));
+        self::assertFileExists((new Dataset)->path('cities'));
     }
 
     #[Test]
@@ -32,8 +32,8 @@ final class DatasetTest extends TestCase
     {
         $dataset = new Dataset;
 
-        $this->assertSame(['id', 'code', 'name', 'slug', 'valid_from', 'valid_to'], $dataset->columns('regions'));
-        $this->assertSame(18, $dataset->count('regions'));
+        self::assertSame(['id', 'code', 'name', 'slug', 'valid_from', 'valid_to'], $dataset->columns('regions'));
+        self::assertSame(18, $dataset->count('regions'));
     }
 
     #[Test]
@@ -41,16 +41,16 @@ final class DatasetTest extends TestCase
     {
         $types = (new Dataset)->types('cities');
 
-        $this->assertSame('integer', $types['id']);
-        $this->assertSame('number', $types['latitude']);
-        $this->assertSame('string', $types['postal_code']);
-        $this->assertSame('date', $types['valid_from']);
+        self::assertSame('integer', $types['id']);
+        self::assertSame('number', $types['latitude']);
+        self::assertSame('string', $types['postal_code']);
+        self::assertSame('date', $types['valid_from']);
     }
 
     #[Test]
     public function it_lists_the_tables_in_the_order_they_are_loaded(): void
     {
-        $this->assertSame(['regions', 'departments', 'communes', 'cities', 'commune_successions'], (new Dataset)->tables());
+        self::assertSame(['regions', 'departments', 'communes', 'cities', 'commune_successions'], (new Dataset)->tables());
     }
 
     #[Test]
@@ -58,7 +58,7 @@ final class DatasetTest extends TestCase
     {
         $sizes = array_map(count(...), iterator_to_array((new Dataset)->chunks('regions'), false));
 
-        $this->assertSame([18], $sizes);
+        self::assertSame([18], $sizes);
     }
 
     #[Test]
@@ -66,9 +66,9 @@ final class DatasetTest extends TestCase
     {
         $manifest = (new Dataset)->manifest();
 
-        $this->assertSame(Dataset::TABLES, array_keys($manifest['tables']));
-        $this->assertNotSame('', $manifest['generated_at']);
-        $this->assertNotNull($manifest['cog_vintage']);
+        self::assertSame(Dataset::TABLES, array_keys($manifest['tables']));
+        self::assertNotSame('', $manifest['generated_at']);
+        self::assertNotNull($manifest['cog_vintage']);
     }
 
     #[Test]
@@ -76,9 +76,9 @@ final class DatasetTest extends TestCase
     {
         $rows = iterator_to_array((new Dataset)->rows('regions'), false);
 
-        $this->assertCount(18, $rows);
-        $this->assertSame('Guadeloupe', $rows[0]['name']);
-        $this->assertNull($rows[0]['valid_to']);
+        self::assertCount(18, $rows);
+        self::assertSame('Guadeloupe', $rows[0]['name']);
+        self::assertNull($rows[0]['valid_to']);
     }
 
     #[Test]
@@ -86,7 +86,7 @@ final class DatasetTest extends TestCase
     {
         $sizes = array_map(count(...), iterator_to_array((new Dataset)->chunks('regions', 7), false));
 
-        $this->assertSame([7, 7, 4], $sizes);
+        self::assertSame([7, 7, 4], $sizes);
     }
 
     #[Test]
@@ -242,7 +242,7 @@ final class DatasetTest extends TestCase
 
         $rows = iterator_to_array((new Dataset($temporaryDataset->directory))->rows('regions'), false);
 
-        $this->assertSame('Bourgogne, Franche-Comté', $rows[0]['name']);
-        $this->assertNull($rows[1]['name']);
+        self::assertSame('Bourgogne, Franche-Comté', $rows[0]['name']);
+        self::assertNull($rows[1]['name']);
     }
 }

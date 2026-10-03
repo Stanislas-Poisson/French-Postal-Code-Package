@@ -218,7 +218,7 @@ The version of the package follows [SemVer][semver]. A new dataset without chang
 ```bash
 make install
 make test        # PHPUnit: the reader and the loader (see CONTRIBUTING.md for the adapters)
-make quality     # Pint and PHPStan at the maximum level
+make quality     # Pint, PHPStan, Rector, PHP Insights and the tests
 ```
 
 See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code of conduct][conduct].

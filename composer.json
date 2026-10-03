@@ -48,8 +48,12 @@
     },
     "require-dev": {
         "laravel/pint": "^1.13",
+        "nunomaduro/phpinsights": "^2.13",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.5"
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "rector/rector": "^2.6"
     },
     "suggest": {
         "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
@@ -75,19 +79,43 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
         "analyse": "phpstan analyse --memory-limit=1G",
+        "analyse:laravel": "phpstan analyse --configuration=phpstan-laravel.neon --memory-limit=1G",
+        "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G",
         "cs": "pint --test",
         "cs:fix": "pint",
+        "insights": "phpinsights analyse --no-interaction --config-path=phpinsights.php",
+        "markdown": "npx --yes markdownlint-cli2 \"**/*.md\" \"#vendor\" \"#build\" \"#node_modules\"",
+        "quality": [
+            "@cs",
+            "@analyse",
+            "@rector",
+            "@insights",
+            "@test"
+        ],
+        "quality:fast": [
+            "@cs",
+            "@analyse"
+        ],
+        "quality:fix": [
+            "@rector:fix",
+            "@cs:fix"
+        ],
+        "rector": "rector process --dry-run --no-progress-bar",
+        "rector:fix": "rector process --no-progress-bar",
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text",
         "test:laravel": "phpunit --configuration=phpunit.laravel.xml",
-        "analyse:laravel": "phpstan analyse --configuration=phpstan-laravel.neon --memory-limit=1G",
-        "test:symfony": "phpunit --configuration=phpunit.symfony.xml",
-        "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G"
+        "test:symfony": "phpunit --configuration=phpunit.symfony.xml"
     },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "process-timeout": 0
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

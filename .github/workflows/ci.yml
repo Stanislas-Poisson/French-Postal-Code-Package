@@ -23,13 +23,15 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
       - run: composer analyse
+      - run: composer rector
+      - run: composer insights
 
   docs:
     name: Markdown
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - run: npx --yes markdownlint-cli2 "**/*.md" "#vendor" "#node_modules"
+      - run: npx --yes markdownlint-cli2 "**/*.md" "#vendor" "#build" "#node_modules"
 
   security:
     name: Dependencies audit

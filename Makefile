@@ -24,14 +24,49 @@ test-symfony: ## Test the Symfony adapter, after scripts/install-symfony.sh 7.4
 coverage: ## Run the tests with the coverage of src/
 	vendor/bin/phpunit --coverage-text
 
+.PHONY: hooks
+hooks: ## Activate the Git hooks of .githooks
+	git config core.hooksPath .githooks
+
+.PHONY: cs
+cs: ## Check the code style with Pint
+	composer cs
+
+.PHONY: cs-fix
+cs-fix: ## Fix the code style with Pint
+	composer cs:fix
+
+.PHONY: analyse
+analyse: ## Run PHPStan at the maximum level
+	composer analyse
+
+.PHONY: rector
+rector: ## Check what Rector would change
+	composer rector
+
+.PHONY: rector-fix
+rector-fix: ## Apply the changes of Rector
+	composer rector:fix
+
+.PHONY: insights
+insights: ## Run PHP Insights, which must give 100 % everywhere
+	composer insights
+
+.PHONY: markdown
+markdown: ## Lint the Markdown files
+	composer markdown
+
+.PHONY: quality-fast
+quality-fast: ## Check the style and run the analysis (the pre-commit hook)
+	composer quality:fast
+
 .PHONY: quality
-quality: ## Check the code style and run the static analysis
-	vendor/bin/pint --test
-	vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+quality: ## Run the whole quality gate (the pre-push hook)
+	composer quality
 
 .PHONY: quality-fix
-quality-fix: ## Fix the code style
-	vendor/bin/pint
+quality-fix: ## Fix what can be fixed: Rector, then Pint
+	composer quality:fix
 
 .PHONY: data
 data: ## Replace data/ with a release of the builder (VERSION=4.0.0, the latest by default)

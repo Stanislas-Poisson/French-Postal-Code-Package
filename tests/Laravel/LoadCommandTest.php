@@ -25,7 +25,7 @@ final class LoadCommandTest extends TestCase
 
         $this->command('french-postal-code:load')->expectsOutputToContain('0 added')->assertSuccessful();
 
-        $this->assertSame((new Dataset)->count('cities'), City::query()->count());
+        self::assertSame((new Dataset)->count('cities'), City::query()->count());
     }
 
     #[Test]
@@ -49,12 +49,12 @@ final class LoadCommandTest extends TestCase
 
         $city = City::query()->firstOrFail();
 
-        $this->assertSame('double', gettype($city->latitude));
-        $this->assertSame('integer', gettype($city->address_count));
-        $this->assertSame('1943-01-01', City::query()->orderBy('valid_from')->firstOrFail()->valid_from->format('Y-m-d'));
-        $this->assertNull($city->valid_to);
-        $this->assertSame('french_cities', $city->getTable());
-        $this->assertFalse($city->incrementing);
+        self::assertSame('double', gettype($city->latitude));
+        self::assertSame('integer', gettype($city->getAttribute('address_count')));
+        self::assertSame('1943-01-01', City::query()->orderBy('valid_from')->firstOrFail()->valid_from->format('Y-m-d'));
+        self::assertNull($city->valid_to);
+        self::assertSame('french_cities', $city->getTable());
+        self::assertFalse($city->incrementing);
     }
 
     #[Test]
@@ -64,7 +64,7 @@ final class LoadCommandTest extends TestCase
 
         $this->command('french-postal-code:load', ['--chunk' => 'many'])->assertSuccessful();
 
-        $this->assertSame((new Dataset)->count('regions'), Region::query()->count());
+        self::assertSame((new Dataset)->count('regions'), Region::query()->count());
     }
 
     #[Test]
@@ -76,9 +76,9 @@ final class LoadCommandTest extends TestCase
         $current = Commune::query()->current()->count();
         $closed  = Commune::query()->whereNotNull('valid_to')->count();
 
-        $this->assertGreaterThan(0, $closed);
-        $this->assertSame(Commune::query()->count() - $closed, $current);
-        $this->assertSame(CommuneSuccession::query()->count(), CommuneSuccession::query()->current()->count());
+        self::assertGreaterThan(0, $closed);
+        self::assertSame(Commune::query()->count() - $closed, $current);
+        self::assertSame(CommuneSuccession::query()->count(), CommuneSuccession::query()->current()->count());
     }
 
     #[Test]
@@ -91,7 +91,7 @@ final class LoadCommandTest extends TestCase
 
         $this->command('french-postal-code:load')->assertSuccessful();
 
-        $this->assertNotNull(City::query()->find(999_999));
+        self::assertNotNull(City::query()->find(999_999));
     }
 
     #[Test]
@@ -102,10 +102,10 @@ final class LoadCommandTest extends TestCase
         $this->migrate();
         $this->command('french-postal-code:load')->assertSuccessful();
 
-        $this->assertSame((new Dataset)->count('regions'), DB::connection('second')->table('fpc_regions')->count());
-        $this->assertSame((new Dataset)->count('regions'), Region::query()->count());
-        $this->assertSame('fpc_regions', (new Region)->getTable());
-        $this->assertSame('second', (new Region)->getConnectionName());
+        self::assertSame((new Dataset)->count('regions'), DB::connection('second')->table('fpc_regions')->count());
+        self::assertSame((new Dataset)->count('regions'), Region::query()->count());
+        self::assertSame('fpc_regions', (new Region)->getTable());
+        self::assertSame('second', (new Region)->getConnectionName());
     }
 
     #[Test]
@@ -120,11 +120,11 @@ final class LoadCommandTest extends TestCase
 
         $dataset = new Dataset;
 
-        $this->assertSame($dataset->count('regions'), Region::query()->count());
-        $this->assertSame($dataset->count('departments'), Department::query()->count());
-        $this->assertSame($dataset->count('communes'), Commune::query()->count());
-        $this->assertSame($dataset->count('cities'), City::query()->count());
-        $this->assertSame($dataset->count('commune_successions'), CommuneSuccession::query()->count());
+        self::assertSame($dataset->count('regions'), Region::query()->count());
+        self::assertSame($dataset->count('departments'), Department::query()->count());
+        self::assertSame($dataset->count('communes'), Commune::query()->count());
+        self::assertSame($dataset->count('cities'), City::query()->count());
+        self::assertSame($dataset->count('commune_successions'), CommuneSuccession::query()->count());
     }
 
     #[Test]
@@ -138,7 +138,7 @@ final class LoadCommandTest extends TestCase
 
         $this->command('french-postal-code:load')->assertSuccessful();
 
-        $this->assertSame($label, City::query()->findOrFail($city->id)->label);
+        self::assertSame($label, City::query()->findOrFail($city->id)->label);
     }
 
     #[Test]
@@ -154,9 +154,9 @@ final class LoadCommandTest extends TestCase
 
         $replaced = City::query()->findOrFail(1);
 
-        $this->assertSame(2, $replaced->replaced_by_city_id);
-        $this->assertSame(2, $replaced->replacedBy()->firstOrFail()->id);
-        $this->assertSame([2], City::query()->current()->pluck('id')->all());
+        self::assertSame(2, $replaced->replaced_by_city_id);
+        self::assertSame(2, $replaced->replacedBy()->firstOrFail()->id);
+        self::assertSame([2], City::query()->current()->pluck('id')->all());
     }
 
     #[Test]
@@ -170,10 +170,10 @@ final class LoadCommandTest extends TestCase
         $department = $commune->department()->firstOrFail();
         $region     = $department->region()->firstOrFail();
 
-        $this->assertSame('Tours', $city->commune?->name);
-        $this->assertSame('Centre-Val de Loire', $region->name);
-        $this->assertTrue($commune->cities()->whereKey($city->id)->exists());
-        $this->assertTrue($department->communes()->whereKey($commune->id)->exists());
-        $this->assertTrue($region->departments()->whereKey($department->id)->exists());
+        self::assertSame('Tours', $city->commune?->name);
+        self::assertSame('Centre-Val de Loire', $region->name);
+        self::assertTrue($commune->cities()->whereKey($city->id)->exists());
+        self::assertTrue($department->communes()->whereKey($commune->id)->exists());
+        self::assertTrue($region->departments()->whereKey($department->id)->exists());
     }
 }

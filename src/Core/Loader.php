@@ -53,7 +53,8 @@ final readonly class Loader
         $types   = $this->dataset->types($table);
         $columns = array_values(array_filter(
             $this->dataset->columns($table),
-            static fn (string $column): bool => 'id' !== $column && ('cities' !== $table || self::REPLACED_BY !== $column),
+            static fn (string $column): bool => 'id' !== $column
+                && ('cities' !== $table || self::REPLACED_BY !== $column),
         ));
         $links = [];
 

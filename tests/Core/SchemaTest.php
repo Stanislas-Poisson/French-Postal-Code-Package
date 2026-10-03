@@ -23,7 +23,7 @@ final class SchemaTest extends TestCase
             $schema = $this->schema($table);
 
             foreach ($dataset->rows($table) as $row) {
-                $this->assertSame([], TableSchemaValidator::violations($schema, $row), $table . ' ' . ($row['id'] ?? ''));
+                self::assertSame([], TableSchemaValidator::violations($schema, $row), $table . ' ' . ($row['id'] ?? ''));
             }
         }
     }
@@ -36,7 +36,7 @@ final class SchemaTest extends TestCase
         foreach (Dataset::TABLES as $table) {
             $names = array_map(static fn (array $field): string => $field['name'], $this->schema($table)['fields']);
 
-            $this->assertSame($dataset->columns($table), $names, $table);
+            self::assertSame($dataset->columns($table), $names, $table);
         }
     }
 
@@ -56,13 +56,13 @@ final class SchemaTest extends TestCase
             'valid_from'        => '2026-13-45',
         ]);
 
-        $this->assertContains('id is not a integer: abc', $violations);
-        $this->assertContains('commune_id is required', $violations);
-        $this->assertContains('postal_code does not match its pattern: 3720', $violations);
-        $this->assertContains('latitude is above its maximum: 120.5', $violations);
-        $this->assertContains('address_count is below its minimum: -1', $violations);
-        $this->assertContains('coordinate_source is not an allowed value: google', $violations);
-        $this->assertContains('valid_from is not a date: 2026-13-45', $violations);
+        self::assertContains('id is not a integer: abc', $violations);
+        self::assertContains('commune_id is required', $violations);
+        self::assertContains('postal_code does not match its pattern: 3720', $violations);
+        self::assertContains('latitude is above its maximum: 120.5', $violations);
+        self::assertContains('address_count is below its minimum: -1', $violations);
+        self::assertContains('coordinate_source is not an allowed value: google', $violations);
+        self::assertContains('valid_from is not a date: 2026-13-45', $violations);
     }
 
     /**

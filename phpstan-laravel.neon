@@ -4,6 +4,12 @@ includes:
     - vendor/larastan/larastan/extension.neon
 
 parameters:
+    ignoreErrors:
+        # Larastan describes the methods that Eloquent forwards to its builder as static ones, and the strict rules
+        # refuse a static method called on an object. The calls are the ordinary ones: `$query->whereNull()`.
+        -
+            identifier: staticMethod.dynamicCall
+            message: '#^Dynamic call to static method Illuminate\\Database\\Eloquent\\Builder<.+>::\w+\(\)\.$#'
     paths:
         - src/Core
         - src/Laravel

@@ -1,4 +1,9 @@
 # The rules shared by every PHPStan configuration of the package.
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
 parameters:
     level: max
     checkMissingCallableSignature: true
