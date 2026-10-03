@@ -48,14 +48,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5",
-        "stanislas-poisson/php-dev-tools": "dev-develop"
+        "stanislas-poisson/php-dev-tools": "^0.1"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/Stanislas-Poisson/php-dev-tools"
-        }
-    ],
     "suggest": {
         "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
         "symfony/framework-bundle": "Doctrine entities and console command (6.4, 7.4 or 8)",
