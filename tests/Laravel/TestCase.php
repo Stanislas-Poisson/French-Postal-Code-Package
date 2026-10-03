@@ -13,7 +13,7 @@ use StanislasPoisson\FrenchPostalCode\Tests\Support\TestDatabase;
 
 abstract class TestCase extends Orchestra
 {
-    private const CONNECTIONS = ['testing', 'second'];
+    private const array CONNECTIONS = ['testing', 'second'];
 
     protected function setUp(): void
     {

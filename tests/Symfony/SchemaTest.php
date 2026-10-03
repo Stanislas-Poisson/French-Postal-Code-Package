@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 
 final class SchemaTest extends SymfonyTestCase
 {
-    private const TABLES = ['regions', 'departments', 'communes', 'cities', 'commune_successions'];
+    private const array TABLES = ['regions', 'departments', 'communes', 'cities', 'commune_successions'];
 
     #[Test]
     public function it_can_map_the_tables_without_prefix(): void

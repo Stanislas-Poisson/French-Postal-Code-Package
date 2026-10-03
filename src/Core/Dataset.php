@@ -22,7 +22,7 @@ final class Dataset
     /**
      * The tables, in the order they must be loaded: a table comes after the tables it refers to.
      */
-    public const TABLES = ['regions', 'departments', 'communes', 'cities', 'commune_successions'];
+    public const array TABLES = ['regions', 'departments', 'communes', 'cities', 'commune_successions'];
 
     /**
      * @var Manifest|null
