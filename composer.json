@@ -22,6 +22,7 @@
     "authors": [
         {
             "name": "Stanislas Poisson",
+            "email": "stanislas.p@the-white-rabbits.fr",
             "homepage": "https://github.com/Stanislas-Poisson",
             "role": "Maintainer"
         }
@@ -32,6 +33,16 @@
         "docs": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package#readme",
         "security": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package/security/policy"
     },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/c/zairakai"
+        },
+        {
+            "type": "other",
+            "url": "https://www.twitch.tv/zairakai"
+        }
+    ],
     "require": {
         "php": "^8.2"
     },
@@ -74,8 +85,9 @@
         "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G"
     },
     "config": {
-        "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -84,6 +96,23 @@
             "providers": [
                 "StanislasPoisson\\FrenchPostalCode\\Laravel\\FrenchPostalCodeServiceProvider"
             ]
-        }
+        },
+        "authors": [
+            {
+                "email": [
+                    "stanislas.p@the-white-rabbits.fr"
+                ],
+                "name": "Stanislas Poisson",
+                "notes": "Primary maintainer",
+                "social": {
+                    "github": "https://github.com/Stanislas-Poisson",
+                    "gitlab": "https://gitlab.com/zairakai",
+                    "linkedin": "https://www.linkedin.com/in/stanislasp/",
+                    "stanislas-poisson": "https://stanislas-poisson.fr",
+                    "the-white-rabbits": "https://the-white-rabbits.fr",
+                    "twitch": "https://twitch.tv/zairakai"
+                }
+            }
+        ]
     }
 }
