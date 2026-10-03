@@ -17,7 +17,7 @@ namespace StanislasPoisson\FrenchPostalCode\Core;
  */
 final readonly class Loader
 {
-    private const REPLACED_BY = 'replaced_by_city_id';
+    private const string REPLACED_BY = 'replaced_by_city_id';
 
     public function __construct(
         private Dataset $dataset,

@@ -74,7 +74,7 @@ Reserved to the maintainer. Tags are plain `X.Y.Z`, signed, and made on `main` o
 
 - `declare(strict_types=1)`, `final` classes and explicit types. PHPStan runs at the maximum level with no ignored error.
 - The coverage of `src/` stays at 100 %.
-- The code works on every PHP version the package supports (8.2 and more): no feature of a later version.
+- The code works on every PHP version the package supports (8.3 and more): no feature of a later version.
 - **Never edit `data/` by hand.** It comes from a release of the [builder][builder] with `make data`. A wrong value in the data is reported and fixed there.
 - The package does not require a framework: the Laravel and Symfony adapters load only when the application uses them.
 
