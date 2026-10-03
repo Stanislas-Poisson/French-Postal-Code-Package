@@ -6,7 +6,6 @@ namespace StanislasPoisson\FrenchPostalCode\Core;
 
 use Generator;
 use InvalidArgumentException;
-use JsonException;
 
 /**
  * Reads the data files shipped with the package, without any framework.
@@ -14,6 +13,9 @@ use JsonException;
  * Each table is a CSV file with a header. An empty value is read as null. The manifest announces the columns and the
  * number of rows of every file, and the reader checks them: a truncated or altered file is an error, not a silent
  * partial load.
+ *
+ * @phpstan-import-type Manifest from ManifestReader
+ * @phpstan-import-type Table from ManifestReader
  */
 final class Dataset
 {
@@ -23,7 +25,7 @@ final class Dataset
     public const TABLES = ['regions', 'departments', 'communes', 'cities', 'commune_successions'];
 
     /**
-     * @var array{generated_at: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, array{rows: int, columns: list<string>}>}|null
+     * @var Manifest|null
      */
     private ?array $manifest = null;
 
@@ -76,11 +78,11 @@ final class Dataset
     /**
      * The versions of the sources the data was built from, and the date of the export.
      *
-     * @return array{generated_at: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, array{rows: int, columns: list<string>}>}
+     * @return Manifest
      */
     public function manifest(): array
     {
-        return $this->manifest ??= $this->readManifest();
+        return $this->manifest ??= (new ManifestReader())->read($this->directory);
     }
 
     public function path(string $table): string
@@ -98,42 +100,8 @@ final class Dataset
     public function rows(string $table): Generator
     {
         $description = $this->describe($table);
-        $path        = $this->path($table);
-        $handle      = @fopen($path, 'rb');
 
-        if (false === $handle) {
-            throw DatasetException::missingFile($path);
-        }
-
-        try {
-            $header = $this->read($handle);
-
-            if ($header !== $description['columns']) {
-                throw DatasetException::unexpectedColumns($table, $description['columns'], $header ?? []);
-            }
-
-            $count = 0;
-            $line  = 1;
-
-            while (null !== ($fields = $this->read($handle))) {
-                $line++;
-
-                if (count($fields) !== count($header)) {
-                    throw DatasetException::malformedRow($table, $line, count($header), count($fields));
-                }
-
-                $count++;
-
-                yield array_combine($header, array_map(static fn (string $value): ?string => '' === $value ? null : $value, $fields));
-            }
-
-            if ($count !== $description['rows']) {
-                throw DatasetException::unexpectedRowCount($table, $description['rows'], $count);
-            }
-        }
-        finally {
-            fclose($handle);
-        }
+        yield from (new CsvRows())->rows($this->path($table), $table, $description['columns'], $description['rows']);
     }
 
     /**
@@ -153,32 +121,11 @@ final class Dataset
     {
         $this->describe($table);
 
-        $path = $this->schemas . '/' . $table . '.schema.json';
-        $json = @file_get_contents($path);
-
-        if (false === $json) {
-            throw DatasetException::missingFile($path);
-        }
-
-        try {
-            /** @var array{fields?: list<array{name: string, type: string}>} $schema */
-            $schema = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        }
-        catch (JsonException $jsonException) {
-            throw DatasetException::invalidManifest('the schema of "' . $table . '" is invalid: ' . $jsonException->getMessage());
-        }
-
-        $types = [];
-
-        foreach ($schema['fields'] ?? [] as $field) {
-            $types[$field['name']] = $field['type'];
-        }
-
-        return $types;
+        return (new SchemaReader())->types($this->schemas, $table);
     }
 
     /**
-     * @return array{rows: int, columns: list<string>}
+     * @return Table
      */
     private function describe(string $table): array
     {
@@ -187,51 +134,5 @@ final class Dataset
         }
 
         return $this->manifest()['tables'][$table] ?? throw DatasetException::invalidManifest('the table "' . $table . '" is missing');
-    }
-
-    /**
-     * @param resource $handle
-     *
-     * @return list<string>|null null at the end of the file
-     */
-    private function read($handle): ?array
-    {
-        do {
-            $fields = fgetcsv($handle, null, ',', '"', '');
-        }
-        while ([null] === $fields);
-
-        if (false === $fields) {
-            return null;
-        }
-
-        return array_map(static fn (?string $field): string => $field ?? '', $fields);
-    }
-
-    /**
-     * @return array{generated_at: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, array{rows: int, columns: list<string>}>}
-     */
-    private function readManifest(): array
-    {
-        $path = $this->directory . '/manifest.json';
-        $json = @file_get_contents($path);
-
-        if (false === $json) {
-            throw DatasetException::missingFile($path);
-        }
-
-        try {
-            $manifest = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        }
-        catch (JsonException $jsonException) {
-            throw DatasetException::invalidManifest($jsonException->getMessage());
-        }
-
-        if (! is_array($manifest) || ! is_array($manifest['tables'] ?? null) || ! is_string($manifest['generated_at'] ?? null)) {
-            throw DatasetException::invalidManifest('"generated_at" and "tables" are expected');
-        }
-
-        /** @var array{generated_at: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, array{rows: int, columns: list<string>}>} $manifest */
-        return $manifest;
     }
 }
