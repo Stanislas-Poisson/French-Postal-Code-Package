@@ -20,7 +20,9 @@ final class TemporaryDataset
 
     public function __destruct()
     {
-        foreach (glob($this->directory . '/*') ?: [] as $file) {
+        $files = glob($this->directory . '/*');
+
+        foreach (false === $files ? [] : $files as $file) {
             unlink($file);
         }
 

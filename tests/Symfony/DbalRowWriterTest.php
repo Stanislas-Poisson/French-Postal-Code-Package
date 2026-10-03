@@ -44,7 +44,7 @@ final class DbalRowWriterTest extends TestCase
         $connection = $this->connection(new SQLitePlatform);
         $connection->method('fetchOne')->with('SELECT COUNT(*) FROM "french_cities"')->willReturn('42');
 
-        $this->assertSame(42, (new DbalRowWriter($connection, 'french_'))->count('cities'));
+        self::assertSame(42, (new DbalRowWriter($connection, 'french_'))->count('cities'));
     }
 
     #[Test]
@@ -53,7 +53,7 @@ final class DbalRowWriterTest extends TestCase
         $connection = $this->connection(new SQLitePlatform);
         $connection->method('fetchOne')->willReturn(false);
 
-        $this->assertSame(0, (new DbalRowWriter($connection, 'french_'))->count('cities'));
+        self::assertSame(0, (new DbalRowWriter($connection, 'french_'))->count('cities'));
     }
 
     #[Test]
@@ -76,7 +76,7 @@ final class DbalRowWriterTest extends TestCase
             $ran = true;
         });
 
-        $this->assertTrue($ran);
+        self::assertTrue($ran);
     }
 
     #[Test]

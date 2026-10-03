@@ -17,7 +17,7 @@ final class SchemaTest extends SymfonyTestCase
         self::bootKernel(['prefix' => '']);
         $this->createTables();
 
-        $this->assertTrue($this->entityManager()->getConnection()->createSchemaManager()->tablesExist(['cities']));
+        self::assertTrue($this->entityManager()->getConnection()->createSchemaManager()->tablesExist(['cities']));
     }
 
     #[Test]
@@ -29,7 +29,7 @@ final class SchemaTest extends SymfonyTestCase
         $schemaManager = $this->entityManager()->getConnection()->createSchemaManager();
 
         foreach (self::TABLES as $table) {
-            $this->assertTrue($schemaManager->tablesExist(['french_' . $table]), $table);
+            self::assertTrue($schemaManager->tablesExist(['french_' . $table]), $table);
         }
     }
 
@@ -42,8 +42,8 @@ final class SchemaTest extends SymfonyTestCase
         $schemaManager = $this->entityManager()->getConnection()->createSchemaManager();
 
         foreach (self::TABLES as $table) {
-            $this->assertTrue($schemaManager->tablesExist(['fpc_' . $table]), $table);
-            $this->assertFalse($schemaManager->tablesExist(['french_' . $table]), $table);
+            self::assertTrue($schemaManager->tablesExist(['fpc_' . $table]), $table);
+            self::assertFalse($schemaManager->tablesExist(['french_' . $table]), $table);
         }
     }
 

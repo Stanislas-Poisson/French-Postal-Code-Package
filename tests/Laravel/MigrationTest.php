@@ -21,7 +21,7 @@ final class MigrationTest extends TestCase
 
         $this->migrate();
 
-        $this->assertTrue(Schema::hasTable('cities'));
+        self::assertTrue(Schema::hasTable('cities'));
     }
 
     #[Test]
@@ -31,11 +31,11 @@ final class MigrationTest extends TestCase
 
         $this->migrate();
 
-        $this->assertTrue(Schema::connection('second')->hasTable('french_cities'));
+        self::assertTrue(Schema::connection('second')->hasTable('french_cities'));
 
         // On a server, both connections of the tests lead to the same database.
         if (TestDatabase::isSqlite()) {
-            $this->assertFalse(Schema::connection('testing')->hasTable('french_cities'));
+            self::assertFalse(Schema::connection('testing')->hasTable('french_cities'));
         }
     }
 
@@ -45,7 +45,7 @@ final class MigrationTest extends TestCase
         $this->migrate();
 
         foreach (self::TABLES as $table) {
-            $this->assertTrue(Schema::hasTable('french_' . $table), $table);
+            self::assertTrue(Schema::hasTable('french_' . $table), $table);
         }
     }
 
@@ -57,8 +57,8 @@ final class MigrationTest extends TestCase
         $this->migrate();
 
         foreach (self::TABLES as $table) {
-            $this->assertTrue(Schema::hasTable('fpc_' . $table), $table);
-            $this->assertFalse(Schema::hasTable('french_' . $table), $table);
+            self::assertTrue(Schema::hasTable('fpc_' . $table), $table);
+            self::assertFalse(Schema::hasTable('french_' . $table), $table);
         }
     }
 
@@ -69,7 +69,7 @@ final class MigrationTest extends TestCase
         $this->command('migrate:rollback')->run();
 
         foreach (self::TABLES as $table) {
-            $this->assertFalse(Schema::hasTable('french_' . $table), $table);
+            self::assertFalse(Schema::hasTable('french_' . $table), $table);
         }
     }
 

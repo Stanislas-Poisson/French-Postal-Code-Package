@@ -25,9 +25,9 @@ final class RepositoryTest extends SymfonyTestCase
 
         $commune = $this->entityManager()->getRepository(Commune::class)->findOneBy(['inseeCode' => '85043']);
 
-        $this->assertInstanceOf(Commune::class, $commune);
-        $this->assertFalse($commune->isCurrent());
-        $this->assertNotNull($commune->getValidTo());
+        self::assertInstanceOf(Commune::class, $commune);
+        self::assertFalse($commune->isCurrent());
+        self::assertNotNull($commune->getValidTo());
     }
 
     #[Test]
@@ -37,10 +37,10 @@ final class RepositoryTest extends SymfonyTestCase
         $this->createTables();
         $entityManager = $this->entityManager();
 
-        $this->assertInstanceOf(RegionRepository::class, $entityManager->getRepository(Region::class));
-        $this->assertInstanceOf(DepartmentRepository::class, $entityManager->getRepository(Department::class));
-        $this->assertInstanceOf(CommuneRepository::class, $entityManager->getRepository(Commune::class));
-        $this->assertInstanceOf(CityRepository::class, $entityManager->getRepository(City::class));
+        self::assertInstanceOf(RegionRepository::class, $entityManager->getRepository(Region::class));
+        self::assertInstanceOf(DepartmentRepository::class, $entityManager->getRepository(Department::class));
+        self::assertInstanceOf(CommuneRepository::class, $entityManager->getRepository(Commune::class));
+        self::assertInstanceOf(CityRepository::class, $entityManager->getRepository(City::class));
     }
 
     #[Test]
@@ -51,12 +51,12 @@ final class RepositoryTest extends SymfonyTestCase
         $this->load();
 
         $repository = $this->entityManager()->getRepository(Commune::class);
-        $this->assertInstanceOf(CommuneRepository::class, $repository);
+        self::assertInstanceOf(CommuneRepository::class, $repository);
 
         $current = (int) $repository->current()->select('COUNT(e.id)')->getQuery()->getSingleScalarResult();
         $closed  = (int) $repository->createQueryBuilder('e')->select('COUNT(e.id)')->where('e.validTo IS NOT NULL')->getQuery()->getSingleScalarResult();
 
-        $this->assertGreaterThan(0, $closed);
-        $this->assertSame($repository->count([]) - $closed, $current);
+        self::assertGreaterThan(0, $closed);
+        self::assertSame($repository->count([]) - $closed, $current);
     }
 }
