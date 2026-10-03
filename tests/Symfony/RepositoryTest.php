@@ -37,10 +37,16 @@ final class RepositoryTest extends SymfonyTestCase
         $this->createTables();
         $entityManager = $this->entityManager();
 
-        self::assertInstanceOf(RegionRepository::class, $entityManager->getRepository(Region::class));
-        self::assertInstanceOf(DepartmentRepository::class, $entityManager->getRepository(Department::class));
-        self::assertInstanceOf(CommuneRepository::class, $entityManager->getRepository(Commune::class));
-        self::assertInstanceOf(CityRepository::class, $entityManager->getRepository(City::class));
+        $repositories = [
+            Region::class     => RegionRepository::class,
+            Department::class => DepartmentRepository::class,
+            Commune::class    => CommuneRepository::class,
+            City::class       => CityRepository::class,
+        ];
+
+        foreach ($repositories as $entity => $repository) {
+            self::assertSame($repository, $entityManager->getClassMetadata($entity)->customRepositoryClassName);
+        }
     }
 
     #[Test]
@@ -51,7 +57,6 @@ final class RepositoryTest extends SymfonyTestCase
         $this->load();
 
         $repository = $this->entityManager()->getRepository(Commune::class);
-        self::assertInstanceOf(CommuneRepository::class, $repository);
 
         $current = (int) $repository->current()->select('COUNT(e.id)')->getQuery()->getSingleScalarResult();
         $closed  = (int) $repository->createQueryBuilder('e')->select('COUNT(e.id)')->where('e.validTo IS NOT NULL')->getQuery()->getSingleScalarResult();

@@ -43,7 +43,7 @@ final class FrenchPostalCodeBundle extends AbstractBundle
     }
 
     /**
-     * @param array{table_prefix: string} $config
+     * @param array<mixed> $config
      */
     public function loadExtension(
         array $config,

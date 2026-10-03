@@ -50,7 +50,7 @@ final class LoadCommandTest extends TestCase
         $city = City::query()->firstOrFail();
 
         self::assertSame('double', gettype($city->latitude));
-        self::assertSame('integer', gettype($city->address_count));
+        self::assertSame('integer', gettype($city->getAttribute('address_count')));
         self::assertSame('1943-01-01', City::query()->orderBy('valid_from')->firstOrFail()->valid_from->format('Y-m-d'));
         self::assertNull($city->valid_to);
         self::assertSame('french_cities', $city->getTable());

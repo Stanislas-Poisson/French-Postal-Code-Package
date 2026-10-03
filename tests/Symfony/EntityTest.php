@@ -43,7 +43,7 @@ final class EntityTest extends SymfonyTestCase
             self::assertIsObject($row);
 
             foreach ((new ReflectionClass($row))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if (preg_match('/^(get|is)[A-Z]/', $method->getName()) && 0 === $method->getNumberOfRequiredParameters() && $method->getDeclaringClass()->getName() === $row::class || str_contains($row::class, '\Proxies\\')) {
+                if (1 === preg_match('/^(get|is)[A-Z]/', $method->getName()) && 0 === $method->getNumberOfRequiredParameters() && $method->getDeclaringClass()->getName() === $row::class || str_contains($row::class, '\Proxies\\')) {
                     $method->invoke($row);
                     $called++;
                 }

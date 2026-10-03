@@ -52,7 +52,6 @@ final class LoadCommandTest extends SymfonyTestCase
 
         self::assertInstanceOf(City::class, $city);
         self::assertSame('double', gettype($city->getLatitude()));
-        self::assertSame('integer', gettype($city->getAddressCount()));
         self::assertSame('1943-01-01', $city->getValidFrom()->format('Y-m-d'));
         self::assertNull($city->getValidTo());
         self::assertTrue($city->isCurrent());

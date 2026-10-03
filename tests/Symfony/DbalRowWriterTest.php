@@ -85,7 +85,7 @@ final class DbalRowWriterTest extends TestCase
         $connection = $this->connection(new SQLitePlatform);
         $connection->expects($this->exactly(2))->method('executeStatement')->with(
             'UPDATE "french_cities" SET "replaced_by_city_id" = ? WHERE "id" = ? AND ("replaced_by_city_id" IS NULL OR "replaced_by_city_id" <> ?)',
-            $this->anything(),
+            self::anything(),
             [ParameterType::INTEGER, ParameterType::INTEGER, ParameterType::INTEGER],
         );
 
