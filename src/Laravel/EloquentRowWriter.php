@@ -21,12 +21,17 @@ final readonly class EloquentRowWriter implements RowWriter
         return $this->connection->table($this->prefix . $table)->count();
     }
 
+    /**
+     * @param array<int, int> $links identifier of a city => identifier of the city that replaces it
+     */
     public function linkReplacedCities(array $links): void
     {
         foreach ($links as $city => $replacement) {
             $this->connection->table($this->prefix . 'cities')
                 ->where('id', $city)
-                ->where(static fn (Builder $query) => $query->whereNull('replaced_by_city_id')->orWhere('replaced_by_city_id', '<>', $replacement))
+                ->where(static fn (Builder $builder) => $builder
+                    ->whereNull('replaced_by_city_id')
+                    ->orWhere('replaced_by_city_id', '<>', $replacement))
                 ->update(['replaced_by_city_id' => $replacement]);
         }
     }
@@ -38,6 +43,10 @@ final readonly class EloquentRowWriter implements RowWriter
         });
     }
 
+    /**
+     * @param list<array<string, float|int|string|null>> $rows
+     * @param list<string>                               $updateColumns
+     */
     public function upsert(string $table, array $rows, array $updateColumns): void
     {
         $this->connection->table($this->prefix . $table)->upsert($rows, ['id'], $updateColumns);

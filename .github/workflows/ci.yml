@@ -23,13 +23,23 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer cs
       - run: composer analyse
+      - run: composer rector
+      - run: composer insights
 
   docs:
     name: Markdown
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - run: npx --yes markdownlint-cli2 "**/*.md" "#vendor" "#node_modules"
+
+      # The configuration of markdownlint extends the one of php-dev-tools, which is in vendor/.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer markdown
 
   security:
     name: Dependencies audit
@@ -51,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4']
+        php: ['8.3', '8.4']
     steps:
       - uses: actions/checkout@v7
 
@@ -69,7 +79,6 @@ jobs:
         run: grep -qE '^\s+Lines:\s+100\.00%' coverage.txt
 
   # The frameworks are not in composer.json: each job installs only its own (see scripts/install-laravel.sh).
-  # Laravel 13 needs PHP 8.3 or more.
   laravel:
     name: Laravel ${{ matrix.laravel }} (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
@@ -77,8 +86,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { php: '8.2', laravel: '11' }
-          - { php: '8.2', laravel: '12' }
           - { php: '8.3', laravel: '11' }
           - { php: '8.3', laravel: '12' }
           - { php: '8.3', laravel: '13' }
@@ -121,10 +128,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { php: '8.2', symfony: '6.4' }
           - { php: '8.3', symfony: '6.4' }
           - { php: '8.4', symfony: '6.4' }
-          - { php: '8.2', symfony: '7.4' }
           - { php: '8.3', symfony: '7.4' }
           - { php: '8.4', symfony: '7.4' }
           - { php: '8.4', symfony: '8.0' }

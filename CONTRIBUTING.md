@@ -9,12 +9,28 @@ Thank you for helping. The sections below describe the workflow of this reposito
 | **1. Install** | `make install` | Install the dependencies. |
 | **2. Branch** | `git checkout -b feature/#TICKET-name develop` | Create a branch from `develop`. |
 | **3. Code** | *(your IDE)* | Write the change and its tests. |
-| **4. Quality** | `make quality` | Check the code style and run the static analysis. |
+| **4. Quality** | `make quality` | Run the quality gate: Pint, PHPStan, Rector, PHP Insights and the tests of the core. |
 | **5. Test** | `make test` | Make sure all the tests pass. |
 | **6. Commit** | `git commit -m "type(scope): #TICKET subject"` | Use the [Conventional Commits][conventional-commits] format, in English, 72 characters at most. |
 | **7. Push** | `git push origin feature/#TICKET-name` | Push and open a pull request to `develop`. |
 
 A pull request needs a review and a green `ci` check, and is merged with a merge commit.
+
+## Quality tools
+
+The Composer scripts are the source of truth, and the `Makefile` is a short way to call them. `make help` lists the commands.
+
+| Command | Tool | Description |
+| :--- | :--- | :--- |
+| `make hooks` | Git | Activate the hooks of php-dev-tools: the commit message, `quality:fast` before a commit, `quality` before a push. |
+| `make cs` | Pint | Check the code style. `make cs-fix` fixes it. |
+| `make analyse` | PHPStan | Static analysis at the maximum level with the strict rules, without a baseline. |
+| `make rector` | Rector | Check what Rector would change. `make rector-fix` applies it. |
+| `make insights` | PHP Insights | The four scores (code, complexity, architecture, style) must be 100 %. |
+| `make markdown` | markdownlint | Lint the Markdown files (needs Node.js). |
+| `make quality-fast` | Pint and PHPStan | The checks of the pre-commit hook. `make quality-fix` runs Rector, then Pint. |
+
+The rules come from [php-dev-tools](https://github.com/Stanislas-Poisson/php-dev-tools), which the files of this repository extend: `pint.json`, `phpstan-common.neon`, `rector.php`, `phpinsights.php` and `.markdownlint.json` only hold what is specific to this package. `phpinsights.php` excludes only what is not ours or what a framework imposes: the generated `config/reference.php`, and the Eloquent models for their public properties and their generics. The adapters are analysed by their own jobs, see below.
 
 ## Testing an adapter
 
@@ -58,7 +74,7 @@ Reserved to the maintainer. Tags are plain `X.Y.Z`, signed, and made on `main` o
 
 - `declare(strict_types=1)`, `final` classes and explicit types. PHPStan runs at the maximum level with no ignored error.
 - The coverage of `src/` stays at 100 %.
-- The code works on every PHP version the package supports (8.2 and more): no feature of a later version.
+- The code works on every PHP version the package supports (8.3 and more): no feature of a later version.
 - **Never edit `data/` by hand.** It comes from a release of the [builder][builder] with `make data`. A wrong value in the data is reported and fixed there.
 - The package does not require a framework: the Laravel and Symfony adapters load only when the application uses them.
 

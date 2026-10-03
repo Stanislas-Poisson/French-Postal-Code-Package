@@ -22,6 +22,7 @@
     "authors": [
         {
             "name": "Stanislas Poisson",
+            "email": "stanislas.p@the-white-rabbits.fr",
             "homepage": "https://github.com/Stanislas-Poisson",
             "role": "Maintainer"
         }
@@ -32,13 +33,22 @@
         "docs": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package#readme",
         "security": "https://github.com/Stanislas-Poisson/French-Postal-Code-Package/security/policy"
     },
+    "funding": [
+        {
+            "type": "patreon",
+            "url": "https://www.patreon.com/c/zairakai"
+        },
+        {
+            "type": "other",
+            "url": "https://www.twitch.tv/zairakai"
+        }
+    ],
     "require": {
-        "php": "^8.2"
+        "php": "^8.3"
     },
     "require-dev": {
-        "laravel/pint": "^1.13",
-        "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.5"
+        "phpunit/phpunit": "^11.5",
+        "stanislas-poisson/php-dev-tools": "^1.0"
     },
     "suggest": {
         "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
@@ -64,18 +74,34 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
-        "analyse": "phpstan analyse --memory-limit=1G",
-        "cs": "pint --test",
-        "cs:fix": "pint",
-        "test:laravel": "phpunit --configuration=phpunit.laravel.xml",
+        "analyse": "php-dev-tools analyse",
         "analyse:laravel": "phpstan analyse --configuration=phpstan-laravel.neon --memory-limit=1G",
-        "test:symfony": "phpunit --configuration=phpunit.symfony.xml",
-        "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G"
+        "analyse:symfony": "phpstan analyse --configuration=phpstan-symfony.neon --memory-limit=1G",
+        "cs": "php-dev-tools cs",
+        "cs:fix": "php-dev-tools cs:fix",
+        "insights": "php-dev-tools insights",
+        "markdown": "php-dev-tools markdown",
+        "quality": [
+            "php-dev-tools quality",
+            "@test"
+        ],
+        "quality:fast": "php-dev-tools quality:fast",
+        "quality:fix": "php-dev-tools quality:fix",
+        "rector": "php-dev-tools rector",
+        "rector:fix": "php-dev-tools rector:fix",
+        "test": "phpunit",
+        "test:coverage": "phpunit --coverage-text",
+        "test:laravel": "phpunit --configuration=phpunit.laravel.xml",
+        "test:symfony": "phpunit --configuration=phpunit.symfony.xml"
     },
     "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "process-timeout": 0
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
@@ -84,6 +110,23 @@
             "providers": [
                 "StanislasPoisson\\FrenchPostalCode\\Laravel\\FrenchPostalCodeServiceProvider"
             ]
-        }
+        },
+        "authors": [
+            {
+                "email": [
+                    "stanislas.p@the-white-rabbits.fr"
+                ],
+                "name": "Stanislas Poisson",
+                "notes": "Primary maintainer",
+                "social": {
+                    "github": "https://github.com/Stanislas-Poisson",
+                    "gitlab": "https://gitlab.com/zairakai",
+                    "linkedin": "https://www.linkedin.com/in/stanislasp/",
+                    "stanislas-poisson": "https://stanislas-poisson.fr",
+                    "the-white-rabbits": "https://the-white-rabbits.fr",
+                    "twitch": "https://twitch.tv/zairakai"
+                }
+            }
+        ]
     }
 }

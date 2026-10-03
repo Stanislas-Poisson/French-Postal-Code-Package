@@ -1,8 +1,4 @@
 {
-  "default": true,
-  "MD013": false,
-  "MD024": { "siblings_only": true },
-  "MD033": { "allowed_elements": ["details", "summary", "kbd", "br", "div"] },
-  "MD040": false,
-  "MD041": false
+  "extends": "./vendor/stanislas-poisson/php-dev-tools/config/markdownlint.json",
+  "MD033": { "allowed_elements": ["details", "summary", "kbd", "br", "div"] }
 }

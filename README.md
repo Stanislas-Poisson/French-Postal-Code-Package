@@ -7,7 +7,7 @@
 [![Packagist][badge-packagist]][packagist]
 [![CI][badge-ci]][ci]
 [![License: MIT][badge-license]][license]
-[![PHP 8.2+][badge-php]][composer]
+[![PHP 8.3+][badge-php]][composer]
 
 </div>
 
@@ -100,8 +100,8 @@ Set them **before** running `php artisan migrate`.
 
 | | Supported |
 | :--- | :--- |
-| PHP | 8.2, 8.3, 8.4 |
-| Laravel | 11 and 12 (PHP 8.2 or more), 13 (PHP 8.3 or more) |
+| PHP | 8.3, 8.4 |
+| Laravel | 11, 12 and 13 |
 | Databases | Those Laravel supports, with the foreign keys enforced |
 
 Laravel 11 no longer receives security fixes, so Composer refuses to install it unless you accept its advisories; the adapter is tested on it nonetheless.
@@ -161,8 +161,8 @@ Many applications already own a `cities` or a `regions` table, so the tables of 
 
 | | Supported |
 | :--- | :--- |
-| PHP | 8.2, 8.3, 8.4 |
-| Symfony | 6.4 and 7.4 (PHP 8.2 or more), 8.0 (PHP 8.4) |
+| PHP | 8.3, 8.4 |
+| Symfony | 6.4 and 7.4, 8.0 (PHP 8.4) |
 | Doctrine | ORM 3 with DBAL 4, and DoctrineBundle 2 (Symfony 6.4 and 7) or 3 (Symfony 8) |
 | Databases | MySQL, MariaDB, PostgreSQL and SQLite |
 
@@ -218,7 +218,7 @@ The version of the package follows [SemVer][semver]. A new dataset without chang
 ```bash
 make install
 make test        # PHPUnit: the reader and the loader (see CONTRIBUTING.md for the adapters)
-make quality     # Pint and PHPStan at the maximum level
+make quality     # Pint, PHPStan, Rector, PHP Insights and the tests
 ```
 
 See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code of conduct][conduct].
@@ -230,7 +230,7 @@ See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code o
 [badge-packagist]: https://img.shields.io/packagist/v/stanislas-poisson/french-postal-code?style=flat-square&logo=packagist&logoColor=white&label=packagist
 [badge-ci]: https://img.shields.io/github/actions/workflow/status/Stanislas-Poisson/French-Postal-Code-Package/ci.yml?branch=main&label=ci&style=flat-square&logo=githubactions&logoColor=white
 [badge-license]: https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square
-[badge-php]: https://img.shields.io/badge/php-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white
+[badge-php]: https://img.shields.io/badge/php-8.3%2B-777BB4?style=flat-square&logo=php&logoColor=white
 [builder]: https://github.com/Stanislas-Poisson/French-Postal-Code
 [packagist]: https://packagist.org/packages/stanislas-poisson/french-postal-code
 [ci]: https://github.com/Stanislas-Poisson/French-Postal-Code-Package/actions/workflows/ci.yml

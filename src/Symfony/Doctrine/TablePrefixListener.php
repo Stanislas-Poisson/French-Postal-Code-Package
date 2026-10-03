@@ -15,7 +15,7 @@ use StanislasPoisson\FrenchPostalCode\Symfony\Entity\Region;
  */
 final readonly class TablePrefixListener
 {
-    private const ENTITIES = 'StanislasPoisson\FrenchPostalCode\Symfony\Entity\\';
+    private const string ENTITIES = 'StanislasPoisson\FrenchPostalCode\Symfony\Entity\\';
 
     public function __construct(private string $prefix) {}
 
@@ -35,6 +35,9 @@ final readonly class TablePrefixListener
             return;
         }
 
-        $classMetadata->setPrimaryTable([...$classMetadata->table, 'name' => $this->prefix . $classMetadata->getTableName()]);
+        $classMetadata->setPrimaryTable([
+            ...$classMetadata->table,
+            'name' => $this->prefix . $classMetadata->getTableName(),
+        ]);
     }
 }

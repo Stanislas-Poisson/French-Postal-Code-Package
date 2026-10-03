@@ -21,7 +21,7 @@ abstract class SymfonyTestCase extends KernelTestCase
     private static bool $cacheCleaned = false;
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<mixed> $options
      */
     protected static function createKernel(array $options = []): KernelInterface
     {
@@ -69,7 +69,7 @@ abstract class SymfonyTestCase extends KernelTestCase
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param array<mixed> $options
      */
     protected function load(array $options = []): CommandTester
     {

@@ -24,8 +24,8 @@ final class LoaderTest extends TestCase
 
         (new Loader(new Dataset($temporaryDataset->directory), $inMemoryRowWriter))->load();
 
-        $this->assertSame('99999', $inMemoryRowWriter->row('cities', 99)['postal_code']);
-        $this->assertSame(3, $inMemoryRowWriter->count('cities'));
+        self::assertSame('99999', $inMemoryRowWriter->row('cities', 99)['postal_code']);
+        self::assertSame(3, $inMemoryRowWriter->count('cities'));
     }
 
     #[Test]
@@ -37,11 +37,11 @@ final class LoaderTest extends TestCase
 
         $city = $inMemoryRowWriter->row('cities', 1);
 
-        $this->assertSame(1, $city['id']);
-        $this->assertIsFloat($city['latitude']);
-        $this->assertIsInt($city['address_count']);
-        $this->assertIsString($city['postal_code']);
-        $this->assertNull($inMemoryRowWriter->row('regions', 1)['valid_to']);
+        self::assertSame(1, $city['id']);
+        self::assertIsFloat($city['latitude']);
+        self::assertIsInt($city['address_count']);
+        self::assertIsString($city['postal_code']);
+        self::assertNull($inMemoryRowWriter->row('regions', 1)['valid_to']);
     }
 
     #[Test]
@@ -52,10 +52,10 @@ final class LoaderTest extends TestCase
         $loadReport = (new Loader(new Dataset, $inMemoryRowWriter))->load();
 
         foreach (Dataset::TABLES as $table) {
-            $this->assertSame((new Dataset)->count($table), $inMemoryRowWriter->count($table), $table);
+            self::assertSame((new Dataset)->count($table), $inMemoryRowWriter->count($table), $table);
         }
 
-        $this->assertSame($loadReport->rows(), $loadReport->added());
+        self::assertSame($loadReport->rows(), $loadReport->added());
     }
 
     #[Test]
@@ -70,7 +70,7 @@ final class LoaderTest extends TestCase
             array_filter($inMemoryRowWriter->log, static fn (string $entry): bool => str_starts_with($entry, 'upsert:')),
         )));
 
-        $this->assertSame(Dataset::TABLES, $order);
+        self::assertSame(Dataset::TABLES, $order);
     }
 
     #[Test]
@@ -79,14 +79,14 @@ final class LoaderTest extends TestCase
         $temporaryDataset = TemporaryDataset::minimal();
         $loader           = new Loader(new Dataset($temporaryDataset->directory), new InMemoryRowWriter);
 
-        $first  = $loader->load();
-        $second = $loader->load();
+        $loadReport  = $loader->load();
+        $second      = $loader->load();
 
-        $this->assertSame(['rows' => 2, 'added' => 2], $first->tables['cities']);
-        $this->assertSame(6, $first->rows());
-        $this->assertSame(6, $first->added());
-        $this->assertSame(6, $second->rows());
-        $this->assertSame(0, $second->added());
+        self::assertSame(['rows' => 2, 'added' => 2], $loadReport->tables['cities']);
+        self::assertSame(6, $loadReport->rows());
+        self::assertSame(6, $loadReport->added());
+        self::assertSame(6, $second->rows());
+        self::assertSame(0, $second->added());
     }
 
     #[Test]
@@ -98,9 +98,9 @@ final class LoaderTest extends TestCase
         // One row per block: the first city is written before the city that replaces it exists.
         (new Loader(new Dataset($temporaryDataset->directory), $inMemoryRowWriter, new RowCaster, 1))->load();
 
-        $this->assertSame(2, $inMemoryRowWriter->row('cities', 1)['replaced_by_city_id']);
-        $this->assertNull($inMemoryRowWriter->row('cities', 2)['replaced_by_city_id']);
-        $this->assertLessThan(
+        self::assertSame(2, $inMemoryRowWriter->row('cities', 1)['replaced_by_city_id']);
+        self::assertNull($inMemoryRowWriter->row('cities', 2)['replaced_by_city_id']);
+        self::assertLessThan(
             (int) array_search('link:1', $inMemoryRowWriter->log, true),
             (int) array_search('upsert:cities:1', array_reverse($inMemoryRowWriter->log, true), true),
         );
@@ -118,7 +118,7 @@ final class LoaderTest extends TestCase
             },
         );
 
-        $this->assertSame(['regions:1:1', 'departments:1:1', 'communes:1:1', 'cities:2:2', 'commune_successions:1:1'], $calls);
+        self::assertSame(['regions:1:1', 'departments:1:1', 'communes:1:1', 'cities:2:2', 'commune_successions:1:1'], $calls);
     }
 
     #[Test]
@@ -134,8 +134,8 @@ final class LoaderTest extends TestCase
 
         (new Loader(new Dataset($temporaryDataset->directory), $inMemoryRowWriter))->load();
 
-        $this->assertSame('A', $inMemoryRowWriter->row('cities', 2)['label']);
-        $this->assertSame(2, $inMemoryRowWriter->row('cities', 1)['replaced_by_city_id']);
+        self::assertSame('A', $inMemoryRowWriter->row('cities', 2)['label']);
+        self::assertSame(2, $inMemoryRowWriter->row('cities', 1)['replaced_by_city_id']);
     }
 
     #[Test]
@@ -147,7 +147,7 @@ final class LoaderTest extends TestCase
 
         (new Loader(new Dataset($temporaryDataset->directory), $inMemoryRowWriter))->load();
 
-        $this->assertSame(count(Dataset::TABLES), $inMemoryRowWriter->transactions);
+        self::assertSame(count(Dataset::TABLES), $inMemoryRowWriter->transactions);
     }
 
     #[Test]
@@ -159,6 +159,6 @@ final class LoaderTest extends TestCase
 
         $blocks = array_values(array_filter($inMemoryRowWriter->log, static fn (string $entry): bool => str_starts_with($entry, 'upsert:cities:')));
 
-        $this->assertSame(['upsert:cities:10000', 'upsert:cities:10000', 'upsert:cities:10000', 'upsert:cities:5510'], $blocks);
+        self::assertSame(['upsert:cities:10000', 'upsert:cities:10000', 'upsert:cities:10000', 'upsert:cities:5510'], $blocks);
     }
 }

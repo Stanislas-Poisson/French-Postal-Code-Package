@@ -18,7 +18,10 @@ final class FrenchPostalCodeServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__ . '/../../config/french-postal-code.php' => config_path('french-postal-code.php')], 'french-postal-code-config');
+            $this->publishes(
+                [__DIR__ . '/../../config/french-postal-code.php' => config_path('french-postal-code.php')],
+                'french-postal-code-config',
+            );
 
             $this->commands([LoadCommand::class]);
         }

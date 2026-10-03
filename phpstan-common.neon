@@ -1,7 +1,3 @@
-# The rules shared by every PHPStan configuration of the package.
-parameters:
-    level: max
-    checkMissingCallableSignature: true
-    checkTooWideReturnTypesInProtectedAndPublicMethods: true
-    checkUninitializedProperties: true
-    reportUnmatchedIgnoredErrors: true
+# The rules shared by every PHPStan configuration of the package: the ones of php-dev-tools.
+includes:
+    - vendor/stanislas-poisson/php-dev-tools/config/phpstan.neon

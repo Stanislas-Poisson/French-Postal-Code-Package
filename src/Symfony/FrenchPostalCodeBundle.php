@@ -34,16 +34,22 @@ final class FrenchPostalCodeBundle extends AbstractBundle
             ->children()
             ->scalarNode('table_prefix')
             ->defaultValue('french_')
-            ->info('Prefix of the tables of the package. Many applications already own a "cities" or a "regions" table. An empty value gives "regions", "cities"...')
+            ->info(
+                'Prefix of the tables of the package. Many applications already own a "cities" or a "regions" table. '
+                . 'An empty value gives "regions", "cities"...',
+            )
             ->end()
             ->end();
     }
 
     /**
-     * @param array{table_prefix: string} $config
+     * @param array<mixed> $config
      */
-    public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
-    {
+    public function loadExtension(
+        array $config,
+        ContainerConfigurator $containerConfigurator,
+        ContainerBuilder $containerBuilder,
+    ): void {
         $services = $containerConfigurator->services();
 
         $services->set('french_postal_code.dataset', Dataset::class)->public();
@@ -61,13 +67,22 @@ final class FrenchPostalCodeBundle extends AbstractBundle
             ->args([service('french_postal_code.dataset'), service('french_postal_code.row_writer')])
             ->tag('console.command');
 
-        foreach ([RegionRepository::class, DepartmentRepository::class, CommuneRepository::class, CityRepository::class] as $repository) {
+        $repositories = [
+            RegionRepository::class,
+            DepartmentRepository::class,
+            CommuneRepository::class,
+            CityRepository::class,
+        ];
+
+        foreach ($repositories as $repository) {
             $services->set($repository)->args([service('doctrine')])->tag('doctrine.repository_service');
         }
     }
 
-    public function prependExtension(ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
-    {
+    public function prependExtension(
+        ContainerConfigurator $containerConfigurator,
+        ContainerBuilder $containerBuilder,
+    ): void {
         $containerConfigurator->extension('doctrine', [
             'orm' => [
                 'mappings' => [

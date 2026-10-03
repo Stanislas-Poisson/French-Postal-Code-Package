@@ -40,17 +40,17 @@ final class EntityTest extends SymfonyTestCase
         $called = 0;
 
         foreach ($rows as $row) {
-            $this->assertIsObject($row);
+            self::assertIsObject($row);
 
             foreach ((new ReflectionClass($row))->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if (preg_match('/^(get|is)[A-Z]/', $method->getName()) && 0 === $method->getNumberOfRequiredParameters() && $method->getDeclaringClass()->getName() === $row::class || str_contains($row::class, '\Proxies\\')) {
+                if (1 === preg_match('/^(get|is)[A-Z]/', $method->getName()) && 0 === $method->getNumberOfRequiredParameters() && $method->getDeclaringClass()->getName() === $row::class || str_contains($row::class, '\Proxies\\')) {
                     $method->invoke($row);
                     $called++;
                 }
             }
         }
 
-        $this->assertGreaterThan(30, $called);
+        self::assertGreaterThan(30, $called);
     }
 
     #[Test]
@@ -61,15 +61,16 @@ final class EntityTest extends SymfonyTestCase
 
         $own = new ClassMetadata(City::class);
         $own->setPrimaryTable(['name' => 'cities']);
+
         $foreign = new ClassMetadata(SchemaTool::class);
         $foreign->setPrimaryTable(['name' => 'cities']);
 
-        $listener = new TablePrefixListener('x_');
-        $listener->loadClassMetadata(new LoadClassMetadataEventArgs($own, $entityManager));
-        $listener->loadClassMetadata(new LoadClassMetadataEventArgs($foreign, $entityManager));
+        $tablePrefixListener = new TablePrefixListener('x_');
+        $tablePrefixListener->loadClassMetadata(new LoadClassMetadataEventArgs($own, $entityManager));
+        $tablePrefixListener->loadClassMetadata(new LoadClassMetadataEventArgs($foreign, $entityManager));
 
-        $this->assertSame('x_cities', $own->getTableName());
-        $this->assertSame('cities', $foreign->getTableName());
-        $this->assertSame('StanislasPoisson\FrenchPostalCode\Symfony\Entity', TablePrefixListener::namespace());
+        self::assertSame('x_cities', $own->getTableName());
+        self::assertSame('cities', $foreign->getTableName());
+        self::assertSame('StanislasPoisson\FrenchPostalCode\Symfony\Entity', TablePrefixListener::namespace());
     }
 }

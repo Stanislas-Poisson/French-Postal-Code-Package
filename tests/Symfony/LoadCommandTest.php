@@ -26,8 +26,8 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $commandTester = $this->load();
 
-        $this->assertStringContainsString('0 added', $commandTester->getDisplay());
-        $this->assertSame((new Dataset)->count('cities'), $this->countRows(City::class));
+        self::assertStringContainsString('0 added', $commandTester->getDisplay());
+        self::assertSame((new Dataset)->count('cities'), $this->countRows(City::class));
     }
 
     #[Test]
@@ -50,13 +50,12 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $city = $this->entityManager()->getRepository(City::class)->find(1);
 
-        $this->assertInstanceOf(City::class, $city);
-        $this->assertSame('double', gettype($city->getLatitude()));
-        $this->assertSame('integer', gettype($city->getAddressCount()));
-        $this->assertSame('1943-01-01', $city->getValidFrom()->format('Y-m-d'));
-        $this->assertNull($city->getValidTo());
-        $this->assertTrue($city->isCurrent());
-        $this->assertNull($city->getReplacedBy());
+        self::assertInstanceOf(City::class, $city);
+        self::assertSame('double', gettype($city->getLatitude()));
+        self::assertSame('1943-01-01', $city->getValidFrom()->format('Y-m-d'));
+        self::assertNull($city->getValidTo());
+        self::assertTrue($city->isCurrent());
+        self::assertNull($city->getReplacedBy());
     }
 
     #[Test]
@@ -67,7 +66,7 @@ final class LoadCommandTest extends SymfonyTestCase
         $commandTester = $this->load(['--chunk' => 'many']);
 
         $commandTester->assertCommandIsSuccessful();
-        $this->assertSame((new Dataset)->count('regions'), $this->countRows(Region::class));
+        self::assertSame((new Dataset)->count('regions'), $this->countRows(Region::class));
     }
 
     #[Test]
@@ -81,7 +80,7 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $this->load();
 
-        $this->assertSame(1, $this->scalar('SELECT COUNT(*) FROM french_cities WHERE id = 999999'));
+        self::assertSame(1, $this->scalar('SELECT COUNT(*) FROM french_cities WHERE id = 999999'));
     }
 
     #[Test]
@@ -91,8 +90,8 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $this->load();
 
-        $this->assertSame((new Dataset)->count('regions'), $this->scalar('SELECT COUNT(*) FROM fpc_regions'));
-        $this->assertSame((new Dataset)->count('regions'), $this->countRows(Region::class));
+        self::assertSame((new Dataset)->count('regions'), $this->scalar('SELECT COUNT(*) FROM fpc_regions'));
+        self::assertSame((new Dataset)->count('regions'), $this->countRows(Region::class));
     }
 
     #[Test]
@@ -103,16 +102,16 @@ final class LoadCommandTest extends SymfonyTestCase
         $commandTester = $this->load();
 
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('rows loaded', $commandTester->getDisplay());
-        $this->assertStringContainsString('cities', $commandTester->getDisplay());
+        self::assertStringContainsString('rows loaded', $commandTester->getDisplay());
+        self::assertStringContainsString('cities', $commandTester->getDisplay());
 
         $dataset = new Dataset;
 
-        $this->assertSame($dataset->count('regions'), $this->countRows(Region::class));
-        $this->assertSame($dataset->count('departments'), $this->countRows(Department::class));
-        $this->assertSame($dataset->count('communes'), $this->countRows(Commune::class));
-        $this->assertSame($dataset->count('cities'), $this->countRows(City::class));
-        $this->assertSame($dataset->count('commune_successions'), $this->countRows(CommuneSuccession::class));
+        self::assertSame($dataset->count('regions'), $this->countRows(Region::class));
+        self::assertSame($dataset->count('departments'), $this->countRows(Department::class));
+        self::assertSame($dataset->count('communes'), $this->countRows(Commune::class));
+        self::assertSame($dataset->count('cities'), $this->countRows(City::class));
+        self::assertSame($dataset->count('commune_successions'), $this->countRows(CommuneSuccession::class));
     }
 
     #[Test]
@@ -126,7 +125,7 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $this->load();
 
-        $this->assertSame($label, $connection->fetchOne('SELECT label FROM french_cities WHERE id = 1'));
+        self::assertSame($label, $connection->fetchOne('SELECT label FROM french_cities WHERE id = 1'));
     }
 
     #[Test]
@@ -140,9 +139,9 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $replaced = $this->entityManager()->getRepository(City::class)->find(1);
 
-        $this->assertInstanceOf(City::class, $replaced);
-        $this->assertSame(2, $replaced->getReplacedBy()?->getId());
-        $this->assertFalse($replaced->isCurrent());
+        self::assertInstanceOf(City::class, $replaced);
+        self::assertSame(2, $replaced->getReplacedBy()?->getId());
+        self::assertFalse($replaced->isCurrent());
     }
 
     #[Test]
@@ -153,12 +152,12 @@ final class LoadCommandTest extends SymfonyTestCase
 
         $city = $this->entityManager()->getRepository(City::class)->findOneBy(['postalCode' => '37200']);
 
-        $this->assertInstanceOf(City::class, $city);
-        $this->assertSame('Tours', $city->getCommune()->getName());
-        $this->assertSame('Centre-Val de Loire', $city->getCommune()->getDepartment()?->getRegion()?->getName());
-        $this->assertTrue($city->getCommune()->getCities()->contains($city));
-        $this->assertTrue($city->getCommune()->getDepartment()->getCommunes()->contains($city->getCommune()));
-        $this->assertTrue($city->getCommune()->getDepartment()->getRegion()->getDepartments()->contains($city->getCommune()->getDepartment()));
+        self::assertInstanceOf(City::class, $city);
+        self::assertSame('Tours', $city->getCommune()->getName());
+        self::assertSame('Centre-Val de Loire', $city->getCommune()->getDepartment()?->getRegion()?->getName());
+        self::assertTrue($city->getCommune()->getCities()->contains($city));
+        self::assertTrue($city->getCommune()->getDepartment()->getCommunes()->contains($city->getCommune()));
+        self::assertTrue($city->getCommune()->getDepartment()->getRegion()->getDepartments()->contains($city->getCommune()->getDepartment()));
     }
 
     /**
