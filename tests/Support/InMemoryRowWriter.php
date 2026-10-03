@@ -77,8 +77,8 @@ final class InMemoryRowWriter implements RowWriter
             $id = (int) $row['id'];
 
             if (isset($this->tables[$table][$id])) {
-                foreach ($updateColumns as $column) {
-                    $this->tables[$table][$id][$column] = $row[$column];
+                foreach ($updateColumns as $updateColumn) {
+                    $this->tables[$table][$id][$updateColumn] = $row[$updateColumn];
                 }
 
                 continue;

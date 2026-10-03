@@ -26,7 +26,7 @@ final readonly class EloquentRowWriter implements RowWriter
         foreach ($links as $city => $replacement) {
             $this->connection->table($this->prefix . 'cities')
                 ->where('id', $city)
-                ->where(static fn (Builder $query) => $query->whereNull('replaced_by_city_id')->orWhere('replaced_by_city_id', '<>', $replacement))
+                ->where(static fn (Builder $builder) => $builder->whereNull('replaced_by_city_id')->orWhere('replaced_by_city_id', '<>', $replacement))
                 ->update(['replaced_by_city_id' => $replacement]);
         }
     }

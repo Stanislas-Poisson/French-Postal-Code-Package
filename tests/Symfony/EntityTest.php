@@ -61,12 +61,13 @@ final class EntityTest extends SymfonyTestCase
 
         $own = new ClassMetadata(City::class);
         $own->setPrimaryTable(['name' => 'cities']);
+
         $foreign = new ClassMetadata(SchemaTool::class);
         $foreign->setPrimaryTable(['name' => 'cities']);
 
-        $listener = new TablePrefixListener('x_');
-        $listener->loadClassMetadata(new LoadClassMetadataEventArgs($own, $entityManager));
-        $listener->loadClassMetadata(new LoadClassMetadataEventArgs($foreign, $entityManager));
+        $tablePrefixListener = new TablePrefixListener('x_');
+        $tablePrefixListener->loadClassMetadata(new LoadClassMetadataEventArgs($own, $entityManager));
+        $tablePrefixListener->loadClassMetadata(new LoadClassMetadataEventArgs($foreign, $entityManager));
 
         self::assertSame('x_cities', $own->getTableName());
         self::assertSame('cities', $foreign->getTableName());

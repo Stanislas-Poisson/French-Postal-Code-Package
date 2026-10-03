@@ -79,12 +79,12 @@ final class LoaderTest extends TestCase
         $temporaryDataset = TemporaryDataset::minimal();
         $loader           = new Loader(new Dataset($temporaryDataset->directory), new InMemoryRowWriter);
 
-        $first  = $loader->load();
-        $second = $loader->load();
+        $loadReport  = $loader->load();
+        $second      = $loader->load();
 
-        self::assertSame(['rows' => 2, 'added' => 2], $first->tables['cities']);
-        self::assertSame(6, $first->rows());
-        self::assertSame(6, $first->added());
+        self::assertSame(['rows' => 2, 'added' => 2], $loadReport->tables['cities']);
+        self::assertSame(6, $loadReport->rows());
+        self::assertSame(6, $loadReport->added());
         self::assertSame(6, $second->rows());
         self::assertSame(0, $second->added());
     }

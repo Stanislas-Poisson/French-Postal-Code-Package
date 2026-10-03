@@ -7,9 +7,9 @@ namespace StanislasPoisson\FrenchPostalCode\Tests\Support;
 /**
  * A small data directory written to the temporary folder, to test the reader on files that are wrong on purpose.
  */
-final class TemporaryDataset
+final readonly class TemporaryDataset
 {
-    public readonly string $directory;
+    public string $directory;
 
     public function __construct()
     {
