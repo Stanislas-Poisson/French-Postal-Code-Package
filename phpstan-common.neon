@@ -1,12 +1,3 @@
-# The rules shared by every PHPStan configuration of the package.
+# The rules shared by every PHPStan configuration of the package: the ones of php-dev-tools.
 includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-    - vendor/phpstan/phpstan-phpunit/rules.neon
-    - vendor/phpstan/phpstan-strict-rules/rules.neon
-
-parameters:
-    level: max
-    checkMissingCallableSignature: true
-    checkTooWideReturnTypesInProtectedAndPublicMethods: true
-    checkUninitializedProperties: true
-    reportUnmatchedIgnoredErrors: true
+    - vendor/stanislas-poisson/php-dev-tools/config/phpstan.neon

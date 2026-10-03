@@ -22,7 +22,7 @@ The Composer scripts are the source of truth, and the `Makefile` is a short way 
 
 | Command | Tool | Description |
 | :--- | :--- | :--- |
-| `make hooks` | Git | Activate the hooks of `.githooks`: the commit message, `quality-fast` before a commit, `quality` before a push. |
+| `make hooks` | Git | Activate the hooks of php-dev-tools: the commit message, `quality:fast` before a commit, `quality` before a push. |
 | `make cs` | Pint | Check the code style. `make cs-fix` fixes it. |
 | `make analyse` | PHPStan | Static analysis at the maximum level with the strict rules, without a baseline. |
 | `make rector` | Rector | Check what Rector would change. `make rector-fix` applies it. |
@@ -30,7 +30,7 @@ The Composer scripts are the source of truth, and the `Makefile` is a short way 
 | `make markdown` | markdownlint | Lint the Markdown files (needs Node.js). |
 | `make quality-fast` | Pint and PHPStan | The checks of the pre-commit hook. `make quality-fix` runs Rector, then Pint. |
 
-The configurations are copied from `zairakai/laravel-dev-tools`, without the Laravel parts. `phpinsights.php` removes the rules that contradict Pint, and excludes only what is not ours or what a framework imposes: the generated `config/reference.php`, and the Eloquent models for their public properties and their generics. The adapters are analysed by their own jobs, see below.
+The rules come from [php-dev-tools](https://github.com/Stanislas-Poisson/php-dev-tools), which the files of this repository extend: `pint.json`, `phpstan-common.neon`, `rector.php`, `phpinsights.php` and `.markdownlint.json` only hold what is specific to this package. The package is read from its GitHub repository until it is on Packagist. `phpinsights.php` excludes only what is not ours or what a framework imposes: the generated `config/reference.php`, and the Eloquent models for their public properties and their generics. The adapters are analysed by their own jobs, see below.
 
 ## Testing an adapter
 
