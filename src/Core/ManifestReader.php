@@ -24,12 +24,25 @@ final class ManifestReader
     {
         $manifest = $this->decode(JsonFile::contents($directory . '/manifest.json'));
 
-        if (! is_array($manifest) || ! is_array($manifest['tables'] ?? null) || ! is_string($manifest['generated_at'] ?? null)) {
+        $this->assertManifest($manifest);
+
+        return $manifest;
+    }
+
+    /**
+     * @phpstan-assert Manifest $manifest
+     *
+     * @throws DatasetException when the manifest is not what is expected
+     */
+    private function assertManifest(mixed $manifest): void
+    {
+        $isValid = is_array($manifest)
+            && is_array($manifest['tables'] ?? null)
+            && is_string($manifest['generated_at'] ?? null);
+
+        if (! $isValid) {
             throw DatasetException::invalidManifest('"generated_at" and "tables" are expected');
         }
-
-        /** @var Manifest $manifest */
-        return $manifest;
     }
 
     private function decode(string $json): mixed

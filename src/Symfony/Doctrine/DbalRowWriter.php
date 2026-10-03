@@ -29,6 +29,9 @@ final readonly class DbalRowWriter implements RowWriter
         return is_numeric($count) ? (int) $count : 0;
     }
 
+    /**
+     * @param array<int, int> $links identifier of a city => identifier of the city that replaces it
+     */
     public function linkReplacedCities(array $links): void
     {
         $sql = sprintf(
@@ -39,7 +42,11 @@ final readonly class DbalRowWriter implements RowWriter
         );
 
         foreach ($links as $city => $replacement) {
-            $this->connection->executeStatement($sql, [$replacement, $city, $replacement], [ParameterType::INTEGER, ParameterType::INTEGER, ParameterType::INTEGER]);
+            $this->connection->executeStatement(
+                $sql,
+                [$replacement, $city, $replacement],
+                [ParameterType::INTEGER, ParameterType::INTEGER, ParameterType::INTEGER],
+            );
         }
     }
 
@@ -50,6 +57,10 @@ final readonly class DbalRowWriter implements RowWriter
         });
     }
 
+    /**
+     * @param list<array<string, float|int|string|null>> $rows
+     * @param list<string>                               $updateColumns
+     */
     public function upsert(string $table, array $rows, array $updateColumns): void
     {
         if ([] === $rows) {
@@ -105,7 +116,10 @@ final readonly class DbalRowWriter implements RowWriter
             ));
         }
 
-        throw new LogicException(sprintf('The platform %s is not supported: the package loads data into MySQL, MariaDB, PostgreSQL and SQLite.', $platform::class));
+        throw new LogicException(sprintf(
+            'The platform %s is not supported: the package loads data into MySQL, MariaDB, PostgreSQL and SQLite.',
+            $platform::class,
+        ));
     }
 
     private function quote(string $identifier): string

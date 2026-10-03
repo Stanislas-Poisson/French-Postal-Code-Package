@@ -21,7 +21,8 @@ final class LoadCommand extends Command
     {
         $chunk = $this->option('chunk');
 
-        $loadReport = (new Loader($dataset, $rowWriter, new RowCaster, is_numeric($chunk) ? max(1, (int) $chunk) : 1000))->load(
+        $size       = is_numeric($chunk) ? max(1, (int) $chunk) : 1000;
+        $loadReport = (new Loader($dataset, $rowWriter, new RowCaster, $size))->load(
             function (string $table, int $rows, int $added): void {
                 $this->components->twoColumnDetail($table, sprintf('%d rows, %d added', $rows, $added));
             },

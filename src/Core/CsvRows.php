@@ -47,7 +47,10 @@ final class CsvRows
             throw DatasetException::malformedRow($table, $line, count($header), count($fields));
         }
 
-        return array_combine($header, array_map(static fn (string $value): ?string => '' === $value ? null : $value, $fields));
+        return array_combine(
+            $header,
+            array_map(static fn (string $value): ?string => '' === $value ? null : $value, $fields),
+        );
     }
 
     /**

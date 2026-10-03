@@ -133,6 +133,7 @@ final class Dataset
             throw DatasetException::unknownTable($table);
         }
 
-        return $this->manifest()['tables'][$table] ?? throw DatasetException::invalidManifest('the table "' . $table . '" is missing');
+        return $this->manifest()['tables'][$table]
+            ?? throw DatasetException::invalidManifest('the table "' . $table . '" is missing');
     }
 }
