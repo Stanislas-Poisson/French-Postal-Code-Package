@@ -17,6 +17,10 @@ A Composer package that gives an application the French administrative areas and
 
 The data comes from the [French-Postal-Code][builder] project, which builds it from the official open sources (INSEE, La Poste, the Base Adresse Nationale) and publishes it on [data.gouv.fr][data-gouv].
 
+## Documentation
+
+The documentation site is <https://stanislas-poisson.github.io/French-Postal-Code-Package/>: this guide and the reference of every class, read from the source, for each released version (selector at the top right, `next` is `main`). Build it with `cd docs && npm ci && npm run dev`.
+
 ## Why a package
 
 An application that stores addresses wants to point each one to a stable postal entry, such as "37200 Tours", with a foreign key. This package keeps the **original identifiers** of the dataset when it loads the rows, and never deletes a row: a closed row has a `valid_to` date, and a replaced city points to its successor. The foreign keys of your application therefore stay valid from one version to the next.
