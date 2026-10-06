@@ -258,6 +258,7 @@ const guide = readme
   .filter((line) => !/^\s*\[!\[|^\s*!\[|^\[[^\]]+\]:\s+https?:.*(badge|shields|img)/i.test(line))
   .join('\n')
   .replace(/\]\(([^)\s]+)\)/g, (_match, target) => `](${absolute(target)})`)
+  .replace(/^(\[[^\]]+\]:\s+)(\S+)/gm, (_match, label, target) => `${label}${absolute(target)}`)
   .replace(/\n{3,}/g, '\n\n')
   .trim()
 
