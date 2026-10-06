@@ -232,6 +232,10 @@ make quality     # Pint, PHPStan, Rector, PHP Insights and the tests
 
 See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code of conduct][conduct].
 
+## Statistics
+
+![Statistics of French-Postal-Code-Package][stats-card]
+
 ## Licence
 
 [MIT][license] for the code. The data stays subject to the licences of its sources, see the [builder][builder].
@@ -250,3 +254,4 @@ See [`CONTRIBUTING.md`][contributing], [`SECURITY.md`][security] and the [code o
 [license]: LICENSE
 [security]: SECURITY.md
 [semver]: https://semver.org/
+[stats-card]: https://raw.githubusercontent.com/Stanislas-Poisson/Stanislas-Poisson/main/assets/projects/french-postal-code-package.svg
