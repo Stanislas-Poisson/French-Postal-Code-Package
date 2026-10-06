@@ -13,6 +13,8 @@ const root = resolve(docs, '..')
 const composer = JSON.parse(readFileSync(join(root, 'composer.json'), 'utf8'))
 const repository = (process.env.DOCS_REPOSITORY_URL ?? composer.support?.source ?? '').replace(/\.git$/, '').replace(/\/$/, '')
 const blob = process.env.DOCS_SOURCE_REF ?? 'main'
+// GitLab puts a /-/ before blob, GitHub does not.
+const blobPath = repository.includes('gitlab') ? '/-/blob/' : '/blob/'
 
 const parser = new Engine({ parser: { php8: true, extractDoc: true, suppressErrors: true }, ast: { withPositions: true } })
 
@@ -193,7 +195,7 @@ for (const info of classes.sort((a, b) => `${a.namespace}\\${a.name}`.localeComp
   }
 
   if (repository) {
-    lines.push(`Source: [${rel(info.file)}](${repository}/blob/${blob}/${rel(info.file)}#L${info.line ?? 1})`, '')
+    lines.push(`Source: [${rel(info.file)}](${repository}${blobPath}${blob}/${rel(info.file)}#L${info.line ?? 1})`, '')
   }
 
   if (info.constants.length) {
@@ -250,7 +252,7 @@ const absolute = (target) => {
     path = `${path}.md`
   }
 
-  return `${repository}/blob/${blob}/${path}`
+  return `${repository}${blobPath}${blob}/${path}`
 }
 
 const guide = readme

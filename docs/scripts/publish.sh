@@ -30,6 +30,9 @@ archive_paths="${DOCS_ARCHIVE_PATHS:-docs README.md composer.json src}"
 rm -rf "$out"
 mkdir -p "$out"
 
+# The repository the sources are linked to (GitLab gives it; GitHub is built below).
+export DOCS_REPOSITORY_URL="${DOCS_REPOSITORY_URL:-${CI_PROJECT_URL:-}}"
+
 # On GitHub Actions the build information has other names: give it the ones of the docs config.
 if [ -n "${GITHUB_ACTIONS:-}" ]; then
   export CI_PROJECT_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
@@ -42,6 +45,8 @@ if [ -n "${GITHUB_ACTIONS:-}" ]; then
   CI_COMMIT_TIMESTAMP=$(git log -1 --format=%cI "$GITHUB_SHA")
   export CI_COMMIT_TIMESTAMP
 fi
+
+export DOCS_REPOSITORY_URL="${DOCS_REPOSITORY_URL:-${CI_PROJECT_URL:-}}"
 
 # What built main, to give back to it at the end.
 main_ref="${CI_COMMIT_REF_NAME-}"
