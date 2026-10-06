@@ -207,6 +207,11 @@ make data                  # the latest release
 make data VERSION=4.0.0    # a given release
 ```
 
+A workflow (`Update data`) does it for you every Monday, and by hand from the Actions tab: when the
+latest release of the builder changes `data/`, it opens a pull request with the new figures. Review and
+merge it, then tag and publish as usual: that part stays manual. The same thing runs locally with
+`scripts/propose-data-update.sh --dry-run`.
+
 The archive is checked against the `SHA256SUMS` file of the release before anything is replaced.
 
 ## Versions

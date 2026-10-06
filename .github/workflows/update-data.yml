@@ -1,0 +1,27 @@
+name: Update data
+
+# Looks for a newer dataset of the builder every Monday, and opens a pull request when there is one.
+# Tagging and publishing stay manual: the pull request is reviewed and merged by the maintainer.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  propose:
+    name: Propose the new dataset
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: develop
+
+      - name: Propose a pull request when the data changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: scripts/propose-data-update.sh
