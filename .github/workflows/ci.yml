@@ -2,6 +2,8 @@ name: CI
 
 on:
   pull_request:
+  # Started by hand for the pull requests of the Update data workflow, which cannot start it by itself.
+  workflow_dispatch:
   push:
     branches: [main, develop]
 
