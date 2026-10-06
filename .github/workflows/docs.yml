@@ -1,0 +1,58 @@
+name: Docs
+
+# The documentation site on GitHub Pages: main ("next") and every released version, each built from its own
+# tag, with a version selector. See docs/scripts/publish.sh. A release rebuilds it (workflow_run), so the new
+# version is listed once the Release workflow has finished.
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    # A release that failed has nothing to add.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Build every version and main
+        env:
+          DOCS_SITE_ROOT: /French-Postal-Code-Package/
+          GITHUB_SHA: ${{ github.sha }}
+        run: bash docs/scripts/publish.sh
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: public
+
+  deploy:
+    name: Publish the site
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
