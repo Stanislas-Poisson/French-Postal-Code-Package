@@ -10,6 +10,10 @@ name: Release data
 #
 # It needs the secret DATA_UPDATE_TOKEN (the token of the maintainer): the pull requests start the CI, and only a
 # maintainer can create the tags X.Y.Z. Without it, the workflow does nothing.
+#
+# The tag is signed with a dedicated key: the secret GPG_PRIVATE_KEY, whose public key is in the GPG keys of the
+# maintainer, and the identity of the variables RELEASE_SIGNER_NAME and RELEASE_SIGNER_EMAIL (a verified e-mail
+# of the account, so that GitHub shows the tag as verified).
 on:
   push:
     branches: [develop, main]
@@ -56,6 +60,10 @@ jobs:
           token: ${{ secrets.DATA_UPDATE_TOKEN || github.token }}
 
       - name: Tag when the data changed since the last tag
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          SIGNER_NAME: ${{ vars.RELEASE_SIGNER_NAME }}
+          SIGNER_EMAIL: ${{ vars.RELEASE_SIGNER_EMAIL }}
         run: |
           if [ -z "${GH_TOKEN}" ]; then
             echo "::warning::DATA_UPDATE_TOKEN is not set: tag by hand."
@@ -82,8 +90,17 @@ jobs:
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "${next}" -m "${next}" HEAD
+          if [ -z "${GPG_PRIVATE_KEY}" ] || [ -z "${SIGNER_NAME}" ] || [ -z "${SIGNER_EMAIL}" ]; then
+            echo "::error::The signing key or the identity of the signer is not set (GPG_PRIVATE_KEY, RELEASE_SIGNER_NAME, RELEASE_SIGNER_EMAIL). Tag ${next} by hand."
+            exit 1
+          fi
+          printf '%s\n' "${GPG_PRIVATE_KEY}" | gpg --batch --import
+          key=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr/ {print $10; exit}')
+          git config user.name "${SIGNER_NAME}"
+          git config user.email "${SIGNER_EMAIL}"
+          git config user.signingkey "${key}"
+
+          git tag -s "${next}" -m "${next}" HEAD
+          git tag -v "${next}"
           git push origin "${next}"
-          echo "Tagged ${next} (last tag ${last}): the workflow Release publishes it."
+          echo "Tagged ${next} (last tag ${last}), signed: the workflow Release publishes it."

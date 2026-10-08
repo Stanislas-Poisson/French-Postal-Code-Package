@@ -56,7 +56,7 @@ TEST_DB=mysql TEST_DB_PORT=33306 TEST_DB_PASSWORD=secret composer test:laravel
 
 ## Releasing
 
-Reserved to the maintainer. Tags are plain `X.Y.Z`, signed, and made on `main` only. The only exception is the minor release of a data update, tagged by the workflow `Release data` with the token of the maintainer: it is an annotated tag, not signed.
+Reserved to the maintainer. Tags are plain `X.Y.Z`, signed, and made on `main` only. The minor release of a data update is tagged by the workflow `Release data`, with the token of the maintainer and a dedicated signing key (the secret `GPG_PRIVATE_KEY`, the identity of the variables `RELEASE_SIGNER_NAME` and `RELEASE_SIGNER_EMAIL`).
 
 1. Merge `develop` into `main` with a pull request, and wait for the CI of `main`.
 2. Tag the merge commit and push the tag:
