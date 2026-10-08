@@ -1,0 +1,89 @@
+name: Release data
+
+# Follows a data update (the pull request of `Update data`) up to the release, without a manual step:
+#
+# - a data update merged into develop: open the pull request of develop into main and merge it when the CI passes;
+# - main changed, and data/ differs from the last tag: tag the next minor version. The tag starts `Release`.
+#
+# A new dataset without change of layout is a minor release (see the README). When the columns of the manifest
+# changed, the layout changed: that is a major release, chosen by hand, so this workflow stops and says so.
+#
+# It needs the secret DATA_UPDATE_TOKEN (the token of the maintainer): the pull requests start the CI, and only a
+# maintainer can create the tags X.Y.Z. Without it, the workflow does nothing.
+on:
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-data
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ secrets.DATA_UPDATE_TOKEN }}
+
+jobs:
+  bring-to-main:
+    name: Bring the data update to main
+    if: github.ref_name == 'develop' && contains(github.event.head_commit.message, 'chore/data-')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Open the pull request and merge it when the CI passes
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::warning::DATA_UPDATE_TOKEN is not set: merge develop into main by hand."
+            exit 0
+          fi
+          existing=$(gh pr list --repo "${GITHUB_REPOSITORY}" --base main --head develop --state open --json number --jq '.[0].number // empty')
+          if [ -z "${existing}" ]; then
+            gh pr create --repo "${GITHUB_REPOSITORY}" --base main --head develop \
+              --title "chore(data): #36 release the data update" \
+              --body "A data update was merged into develop: bring it to main. When the CI passes, this pull request is merged by itself, then the next minor version is tagged (workflow Release data)."
+            existing=$(gh pr list --repo "${GITHUB_REPOSITORY}" --base main --head develop --state open --json number --jq '.[0].number')
+          fi
+          gh pr merge "${existing}" --repo "${GITHUB_REPOSITORY}" --auto --merge
+
+  tag:
+    name: Tag the next minor version
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.DATA_UPDATE_TOKEN || github.token }}
+
+      - name: Tag when the data changed since the last tag
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::warning::DATA_UPDATE_TOKEN is not set: tag by hand."
+            exit 0
+          fi
+
+          last=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          if git diff --quiet "${last}" HEAD -- data/; then
+            echo "data/ did not change since ${last}: no tag."
+            exit 0
+          fi
+
+          # The layout of the files: the tables of the manifest and their columns.
+          layout() { git show "$1":data/manifest.json | jq -c '[.tables | to_entries[] | {table: .key, columns: .value.columns}]'; }
+          if [ "$(layout "${last}")" != "$(layout HEAD)" ]; then
+            echo "::error::The layout of the files changed since ${last}: that is a major release. Tag it by hand."
+            exit 1
+          fi
+
+          IFS=. read -r major minor _ <<< "${last}"
+          next="${major}.$((minor + 1)).0"
+          if git rev-parse -q --verify "refs/tags/${next}" > /dev/null; then
+            echo "The tag ${next} already exists."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${next}" -m "${next}" HEAD
+          git push origin "${next}"
+          echo "Tagged ${next} (last tag ${last}): the workflow Release publishes it."
