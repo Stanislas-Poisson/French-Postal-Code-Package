@@ -51,7 +51,11 @@ body="$(mktemp)"
     echo "## What to do"
     echo
     echo "- The CI checks the data against the schemas and the manifest."
-    echo "- Choose the next version from the change of layout of the files (the SemVer rules are in the README), merge, then tag and publish as usual: this is not automatic."
+    if [ "${AUTO_MERGE:-false}" = "true" ]; then
+        echo "- When the CI passes, the pull request is merged by itself, then the workflow Release data brings it to main and tags the next minor version (a new dataset without change of layout, see the README)."
+    else
+        echo "- Choose the next version from the change of layout of the files (the SemVer rules are in the README), merge, then tag and publish as usual: this is not automatic."
+    fi
     echo
     echo "Part of #$ISSUE"
 } >"$body"
@@ -77,6 +81,11 @@ gh pr create --base "$BASE_BRANCH" --head "$branch" \
     --title "chore(data): #$ISSUE update data/ to the release $version of the builder" \
     --body-file "$body"
 
-# A pull request opened with the token of a workflow does not start the other workflows (GitHub's
-# rule against loops), except by dispatch: start the CI by hand so that the required check runs.
-gh workflow run ci.yml --ref "$branch"
+if [ "${AUTO_MERGE:-false}" = "true" ]; then
+    # Opened with the token of the maintainer, the pull request starts the CI by itself: merge it when the CI passes.
+    gh pr merge "$branch" --auto --merge
+else
+    # A pull request opened with the token of a workflow does not start the other workflows (GitHub's
+    # rule against loops), except by dispatch: start the CI by hand so that the required check runs.
+    gh workflow run ci.yml --ref "$branch"
+fi
