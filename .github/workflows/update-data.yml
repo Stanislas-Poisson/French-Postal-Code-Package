@@ -1,7 +1,11 @@
 name: Update data
 
-# Looks for a newer dataset of the builder every Monday, and opens a pull request when there is one.
-# Tagging and publishing stay manual: the pull request is reviewed and merged by the maintainer.
+# Looks for a newer dataset of the builder every Monday, and when the builder publishes a release (it starts this
+# workflow), and opens a pull request when there is one.
+#
+# With the secret DATA_UPDATE_TOKEN (the token of the maintainer) the pull request starts the CI by itself and is
+# merged when the CI passes, then `Release data` takes over. Without it, the pull request is opened with the token of
+# the workflow, the CI is started by hand and the merge is left to the maintainer.
 on:
   schedule:
     - cron: '0 6 * * 1'
@@ -20,8 +24,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: develop
+          token: ${{ secrets.DATA_UPDATE_TOKEN || github.token }}
 
       - name: Propose a pull request when the data changed
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.DATA_UPDATE_TOKEN || github.token }}
+          # With the token of the maintainer, the pull request starts the CI and can be merged by itself.
+          AUTO_MERGE: ${{ secrets.DATA_UPDATE_TOKEN != '' }}
         run: scripts/propose-data-update.sh
