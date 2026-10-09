@@ -27,6 +27,13 @@ echo "$output"
 
 version="$(printf '%s\n' "$output" | sed -n 's/^Release \([^ ]*\) of .*/\1/p' | head -n 1)"
 
+# The archive does not say which release it comes from: keep it in the manifest, as it decides the next version.
+if [ -n "$version" ]; then
+    manifest_tmp="$(mktemp)"
+    jq --indent 4 --arg release "$version" '.builder_release = $release' data/manifest.json >"$manifest_tmp"
+    mv "$manifest_tmp" data/manifest.json
+fi
+
 if [ -z "$(git status --porcelain data)" ]; then
     echo "data/ already holds the release $version: nothing to propose."
     exit 0

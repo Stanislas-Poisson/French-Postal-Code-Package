@@ -46,9 +46,10 @@ final class LoadCommand extends Command
         $manifest = $this->dataset->manifest();
 
         $symfonyStyle->success(sprintf(
-            '%d rows loaded, %d added (INSEE COG %s, La Poste %s).',
+            '%d rows loaded, %d added (%sINSEE COG %s, La Poste %s).',
             $loadReport->rows(),
             $loadReport->added(),
+            null === $this->dataset->release() ? '' : 'builder release ' . $this->dataset->release() . ', ',
             $manifest['cog_vintage']     ?? 'unknown',
             $manifest['laposte_version'] ?? 'unknown',
         ));

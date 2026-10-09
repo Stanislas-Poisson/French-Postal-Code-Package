@@ -7,11 +7,11 @@ namespace StanislasPoisson\FrenchPostalCode\Core;
 use JsonException;
 
 /**
- * Reads the manifest of the data files: the date of the export, the versions of the sources, and the columns and
+ * Reads the manifest of the data files: the date of the export, the release of the builder, the versions of the sources, and the columns and
  * the number of rows of each table.
  *
  * @phpstan-type Table array{rows: int, columns: list<string>}
- * @phpstan-type Manifest array{generated_at: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, Table>}
+ * @phpstan-type Manifest array{generated_at: string, builder_release?: string, cog_vintage: string|null, laposte_version: string|null, tables: array<string, Table>}
  */
 final class ManifestReader
 {
@@ -30,6 +30,18 @@ final class ManifestReader
     }
 
     /**
+     * @param array<array-key, mixed> $manifest
+     *
+     * @throws DatasetException when the release of the builder is not a string
+     */
+    private function assertBuilderRelease(array $manifest): void
+    {
+        if (isset($manifest['builder_release']) && ! is_string($manifest['builder_release'])) {
+            throw DatasetException::invalidManifest('"builder_release" must be a string');
+        }
+    }
+
+    /**
      * @phpstan-assert Manifest $manifest
      *
      * @throws DatasetException when the manifest is not what is expected
@@ -43,6 +55,8 @@ final class ManifestReader
         if (! $isValid) {
             throw DatasetException::invalidManifest('"generated_at" and "tables" are expected');
         }
+
+        $this->assertBuilderRelease($manifest);
     }
 
     private function decode(string $json): mixed
