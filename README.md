@@ -108,7 +108,6 @@ Set them **before** running `php artisan migrate`.
 | Laravel | 12 and 13 |
 | Databases | Those Laravel supports, with the foreign keys enforced |
 
-
 ## Symfony
 
 ```bash
