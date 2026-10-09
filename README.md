@@ -105,10 +105,8 @@ Set them **before** running `php artisan migrate`.
 | | Supported |
 | :--- | :--- |
 | PHP | 8.3, 8.4 |
-| Laravel | 11, 12 and 13 |
+| Laravel | 12 and 13 |
 | Databases | Those Laravel supports, with the foreign keys enforced |
-
-Laravel 11 no longer receives security fixes, so Composer refuses to install it unless you accept its advisories; the adapter is tested on it nonetheless.
 
 ## Symfony
 

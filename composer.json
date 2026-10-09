@@ -51,14 +51,14 @@
         "stanislas-poisson/php-dev-tools": "^1.0"
     },
     "suggest": {
-        "laravel/framework": "Eloquent models and Artisan command (11 to 13)",
+        "laravel/framework": "Eloquent models and Artisan command (12 or 13)",
         "symfony/framework-bundle": "Doctrine entities and console command (6.4, 7.4 or 8)",
         "doctrine/orm": "Needed by the Symfony adapter (3.x, with DBAL 4)",
         "doctrine/doctrine-bundle": "Needed by the Symfony adapter",
         "symfony/var-exporter": "Needed by Doctrine ORM to load a relation on demand, below PHP 8.4"
     },
     "conflict": {
-        "laravel/framework": "<11.0",
+        "laravel/framework": "<12.0",
         "symfony/framework-bundle": "<6.4",
         "doctrine/orm": "<3.0",
         "doctrine/dbal": "<4.0"
