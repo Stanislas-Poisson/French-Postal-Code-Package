@@ -167,6 +167,17 @@ final class DatasetTest extends TestCase
     }
 
     #[Test]
+    public function it_refuses_a_release_of_the_builder_that_is_not_a_string(): void
+    {
+        $temporaryDataset = (new TemporaryDataset)->write('manifest.json', '{"generated_at": "2026-10-02", "builder_release": 4, "tables": {}}');
+
+        $this->expectException(DatasetException::class);
+        $this->expectExceptionMessage('"builder_release" must be a string');
+
+        (new Dataset($temporaryDataset->directory))->manifest();
+    }
+
+    #[Test]
     public function it_refuses_a_row_with_the_wrong_number_of_fields(): void
     {
         $temporaryDataset = (new TemporaryDataset)
