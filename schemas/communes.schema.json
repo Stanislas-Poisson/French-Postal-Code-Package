@@ -3,7 +3,6 @@
   "name": "communes",
   "title": "Communes",
   "description": "The communes and the municipal arrondissements (Paris, Lyon, Marseille), closed ones included.",
-  "version": "4.0.0",
   "missingValues": [
     ""
   ],
