@@ -30,6 +30,18 @@ final class ManifestReader
     }
 
     /**
+     * @param array<array-key, mixed> $manifest
+     *
+     * @throws DatasetException when the release of the builder is not a string
+     */
+    private function assertBuilderRelease(array $manifest): void
+    {
+        if (isset($manifest['builder_release']) && ! is_string($manifest['builder_release'])) {
+            throw DatasetException::invalidManifest('"builder_release" must be a string');
+        }
+    }
+
+    /**
      * @phpstan-assert Manifest $manifest
      *
      * @throws DatasetException when the manifest is not what is expected
@@ -38,12 +50,13 @@ final class ManifestReader
     {
         $isValid = is_array($manifest)
             && is_array($manifest['tables'] ?? null)
-            && is_string($manifest['generated_at'] ?? null)
-            && (! isset($manifest['builder_release']) || is_string($manifest['builder_release']));
+            && is_string($manifest['generated_at'] ?? null);
 
         if (! $isValid) {
-            throw DatasetException::invalidManifest('"generated_at" and "tables" are expected, "builder_release" must be a string');
+            throw DatasetException::invalidManifest('"generated_at" and "tables" are expected');
         }
+
+        $this->assertBuilderRelease($manifest);
     }
 
     private function decode(string $json): mixed
