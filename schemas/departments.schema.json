@@ -3,7 +3,6 @@
   "name": "departments",
   "title": "Departments and overseas collectivities",
   "description": "The departments and the overseas collectivities.",
-  "version": "4.0.0",
   "missingValues": [
     ""
   ],
