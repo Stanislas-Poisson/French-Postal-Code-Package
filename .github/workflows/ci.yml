@@ -88,10 +88,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { php: '8.3', laravel: '11' }
           - { php: '8.3', laravel: '12' }
           - { php: '8.3', laravel: '13' }
-          - { php: '8.4', laravel: '11' }
           - { php: '8.4', laravel: '12' }
           - { php: '8.4', laravel: '13' }
     steps:
@@ -101,12 +99,6 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           coverage: pcov
-
-      # Every release of Laravel 11 is flagged by a security advisory, so Composer refuses to install it by default.
-      # The adapter is still tested on it, since it declares to support it.
-      - name: Allow Laravel 11, which is no longer maintained
-        if: matrix.laravel == '11'
-        run: composer config audit.block-insecure false
 
       - name: Install Laravel ${{ matrix.laravel }}
         run: |
