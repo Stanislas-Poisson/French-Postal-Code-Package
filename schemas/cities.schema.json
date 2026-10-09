@@ -3,7 +3,6 @@
   "name": "cities",
   "title": "Cities (commune and postal code)",
   "description": "One row per commune and per postal code, with its GPS point. The table to reference by a foreign key.",
-  "version": "4.0.0",
   "missingValues": [
     ""
   ],

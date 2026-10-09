@@ -3,7 +3,6 @@
   "name": "regions",
   "title": "Regions",
   "description": "The French regions.",
-  "version": "4.0.0",
   "missingValues": [
     ""
   ],

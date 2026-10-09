@@ -3,7 +3,6 @@
   "name": "commune_successions",
   "title": "Commune code successions",
   "description": "For an old INSEE code, the code that follows it, the kind of change and its date.",
-  "version": "4.0.0",
   "missingValues": [
     ""
   ],
