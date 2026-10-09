@@ -93,6 +93,14 @@ final class Dataset
     }
 
     /**
+     * The release of the builder the data come from (for example 4.1.1), or null when the manifest does not say.
+     */
+    public function release(): ?string
+    {
+        return $this->manifest()['builder_release'] ?? null;
+    }
+
+    /**
      * The rows of a table, one at a time, indexed by column name.
      *
      * @return Generator<int, array<string, string|null>>

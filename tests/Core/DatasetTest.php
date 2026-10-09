@@ -28,12 +28,26 @@ final class DatasetTest extends TestCase
     }
 
     #[Test]
+    public function it_has_no_release_when_the_manifest_does_not_say(): void
+    {
+        $temporaryDataset = TemporaryDataset::minimal();
+
+        self::assertNull((new Dataset($temporaryDataset->directory))->release());
+    }
+
+    #[Test]
     public function it_knows_the_columns_and_the_number_of_rows_of_a_table(): void
     {
         $dataset = new Dataset;
 
         self::assertSame(['id', 'code', 'name', 'slug', 'valid_from', 'valid_to'], $dataset->columns('regions'));
         self::assertSame(18, $dataset->count('regions'));
+    }
+
+    #[Test]
+    public function it_knows_the_release_of_the_builder_the_data_come_from(): void
+    {
+        self::assertMatchesRegularExpression('/^\d+\.\d+\.\d+$/', (string) (new Dataset)->release());
     }
 
     #[Test]
