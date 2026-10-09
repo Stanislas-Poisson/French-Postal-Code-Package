@@ -31,9 +31,10 @@ final class LoadCommand extends Command
         $manifest = $dataset->manifest();
 
         $this->components->info(sprintf(
-            '%d rows loaded, %d added (INSEE COG %s, La Poste %s).',
+            '%d rows loaded, %d added (%sINSEE COG %s, La Poste %s).',
             $loadReport->rows(),
             $loadReport->added(),
+            null === $dataset->release() ? '' : 'builder release ' . $dataset->release() . ', ',
             $manifest['cog_vintage']     ?? 'unknown',
             $manifest['laposte_version'] ?? 'unknown',
         ));

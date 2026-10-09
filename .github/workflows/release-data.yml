@@ -3,9 +3,10 @@ name: Release data
 # Follows a data update (the pull request of `Update data`) up to the release, without a manual step:
 #
 # - a data update merged into develop: open the pull request of develop into main and merge it when the CI passes;
-# - main changed, and data/ differs from the last tag: tag the next minor version. The tag starts `Release`.
+# - main changed, and data/ differs from the last tag: tag the next version. The tag starts `Release`.
 #
-# A new dataset without change of layout is a minor release (see the README). When the columns of the manifest
+# The version follows the change of the builder (see the README): a new minor version of the builder gives a minor
+# release, a new patch version (the points of the BAN) a patch release. When the columns of the manifest
 # changed, the layout changed: that is a major release, chosen by hand, so this workflow stops and says so.
 #
 # It needs the secret DATA_UPDATE_TOKEN (the token of the maintainer): the pull requests start the CI, and only a
@@ -83,8 +84,28 @@ jobs:
             exit 1
           fi
 
-          IFS=. read -r major minor _ <<< "${last}"
-          next="${major}.$((minor + 1)).0"
+          # The version follows the change of the release of the builder the data come from, as in the builder:
+          # a new Y (a file of INSEE or La Poste) is a minor release, a new Z (the points of the BAN) a patch release.
+          release_of() { git show "$1":data/manifest.json | jq -r '.builder_release // empty'; }
+          old_release=$(release_of "${last}")
+          new_release=$(release_of HEAD)
+
+          IFS=. read -r major minor patch <<< "${last}"
+          if [ -z "${old_release}" ] || [ -z "${new_release}" ]; then
+            # No trace of the release on one side: a new dataset without change of layout is a minor release.
+            next="${major}.$((minor + 1)).0"
+          else
+            IFS=. read -r old_x old_y _ <<< "${old_release}"
+            IFS=. read -r new_x new_y _ <<< "${new_release}"
+            if [ "${old_x}" != "${new_x}" ]; then
+              echo "::error::The builder went from ${old_release} to ${new_release}: that is a major release. Tag it by hand."
+              exit 1
+            elif [ "${old_y}" != "${new_y}" ]; then
+              next="${major}.$((minor + 1)).0"
+            else
+              next="${major}.${minor}.$((patch + 1))"
+            fi
+          fi
           if git rev-parse -q --verify "refs/tags/${next}" > /dev/null; then
             echo "The tag ${next} already exists."
             exit 0
@@ -100,7 +121,11 @@ jobs:
           git config user.email "${SIGNER_EMAIL}"
           git config user.signingkey "${key}"
 
-          git tag -s "${next}" -m "${next}" HEAD
+          if [ -n "${new_release}" ]; then
+            git tag -s "${next}" -m "${next}" -m "Data of the release ${new_release} of the builder." HEAD
+          else
+            git tag -s "${next}" -m "${next}" HEAD
+          fi
           git tag -v "${next}"
           git push origin "${next}"
           echo "Tagged ${next} (last tag ${last}), signed: the workflow Release publishes it."

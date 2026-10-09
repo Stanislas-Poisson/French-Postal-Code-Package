@@ -68,5 +68,6 @@
                 "effective_date"
             ]
         }
-    }
+    },
+    "builder_release": "4.1.1"
 }

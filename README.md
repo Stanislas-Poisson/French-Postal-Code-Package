@@ -214,15 +214,20 @@ make data VERSION=4.0.0    # a given release
 A workflow (`Update data`) does it for you: the builder starts it when its release is published, and it also
 runs every Monday and by hand from the Actions tab. When the latest release of the builder changes `data/`, it
 opens a pull request with the new figures, which is merged when the CI passes. The workflow `Release data` then
-brings `develop` to `main` and tags the next minor version (a new dataset without change of layout is a minor
-release), which publishes the release. It stops, and says why, when the layout of the files changed: that is a
+brings `develop` to `main` and tags the next version (see [Versions](#versions)), which publishes the release. It stops, and says why, when the layout of the files changed: that is a
 major release, tagged by hand. The same thing runs locally with `scripts/propose-data-update.sh --dry-run`.
 
 The archive is checked against the `SHA256SUMS` file of the release before anything is replaced.
 
 ## Versions
 
-The version of the package follows [SemVer][semver]. A new dataset without change of layout is a minor release, a change of the layout of the files is a major release, and a fix is a patch. The first release is `4.0.0`, to follow the dataset it holds.
+The version of the package follows [SemVer][semver], and a data update follows the release of the builder it comes from (the manifest holds it as `builder_release`, and `Dataset::release()` returns it):
+
+- **Z** (4.2.0 to 4.2.1): the points of the BAN changed (`latitude`, `longitude`, `address_count`), or a fix.
+- **Y** (4.2.1 to 4.3.0): a file of INSEE or La Poste changed in the builder. Z goes back to 0.
+- **X** (4.3.0 to 5.0.0): the layout of the files changed. Tagged by hand.
+
+The first release is `4.0.0`, to follow the dataset it holds. The versions of the package and of the builder are not the same number: a fix of the code is a patch of the package only.
 
 ## Development
 
