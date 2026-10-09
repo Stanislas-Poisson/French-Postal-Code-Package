@@ -1,5 +1,5 @@
 {
-    "generated_at": "2026-10-08",
+    "generated_at": "2026-10-09",
     "cog_vintage": "2026",
     "laposte_version": "2026-10",
     "tables": {
@@ -69,5 +69,5 @@
             ]
         }
     },
-    "builder_release": "4.1.1"
+    "builder_release": "4.1.2"
 }
