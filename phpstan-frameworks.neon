@@ -1,0 +1,14 @@
+# The rules of PHPStan for the jobs that test a framework. They are the ones of php-dev-tools, written here because these
+# jobs do not install php-dev-tools: its requirements must not limit the frameworks that the package supports (see
+# scripts/install-laravel.sh and scripts/install-symfony.sh). The other jobs use phpstan-common.neon.
+includes:
+    - %rootDir%/../phpstan-phpunit/extension.neon
+    - %rootDir%/../phpstan-phpunit/rules.neon
+    - %rootDir%/../phpstan-strict-rules/rules.neon
+
+parameters:
+    level: max
+    checkMissingCallableSignature: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true
