@@ -47,8 +47,8 @@
         "php": "^8.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.5",
-        "stanislas-poisson/php-dev-tools": "^1.0"
+        "phpunit/phpunit": "^12.5",
+        "stanislas-poisson/php-dev-tools": "^1.1.1"
     },
     "suggest": {
         "laravel/framework": "Eloquent models and Artisan command (12 or 13)",
