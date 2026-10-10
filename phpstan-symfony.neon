@@ -1,6 +1,6 @@
 # The core and the Symfony adapter. Needs Symfony and Doctrine: see scripts/install-symfony.sh.
 includes:
-    - phpstan-common.neon
+    - phpstan-frameworks.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
 
 parameters:

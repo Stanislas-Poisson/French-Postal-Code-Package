@@ -17,5 +17,13 @@ case "${1:-}" in
         ;;
 esac
 
+# The quality tools are not part of the dependencies of a framework job: their requirements must not limit the
+# frameworks that the package supports. These jobs keep what they use: PHPStan with its extensions, and PHPUnit.
+composer remove --dev --no-interaction --no-update stanislas-poisson/php-dev-tools
+composer require --dev --no-interaction --no-update \
+    "phpstan/phpstan:^2.1" \
+    "phpstan/phpstan-phpunit:^2.0" \
+    "phpstan/phpstan-strict-rules:^2.0"
+
 composer require --dev --no-interaction --no-update "orchestra/testbench:$TESTBENCH" "larastan/larastan:^3.0"
 composer update --no-interaction --prefer-dist
