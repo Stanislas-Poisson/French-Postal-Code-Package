@@ -1,6 +1,6 @@
 # The core and the Laravel adapter. Needs Laravel and Larastan: see scripts/install-laravel.sh.
 includes:
-    - phpstan-common.neon
+    - phpstan-frameworks.neon
     - vendor/larastan/larastan/extension.neon
 
 parameters:
