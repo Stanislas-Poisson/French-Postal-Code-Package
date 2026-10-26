@@ -221,9 +221,9 @@ The archive is checked against the `SHA256SUMS` file of the release before anyth
 
 The version of the package follows [SemVer][semver], and a data update follows the release of the builder it comes from (the manifest holds it as `builder_release`, and `Dataset::release()` returns it):
 
-- **Z** (4.2.0 to 4.2.1): the points of the BAN changed (`latitude`, `longitude`, `address_count`), or a fix.
-- **Y** (4.2.1 to 4.3.0): a file of INSEE or La Poste changed in the builder. Z goes back to 0.
-- **X** (4.3.0 to 5.0.0): the layout of the files changed. Tagged by hand.
+- **Z** (4.2.0 to 4.2.1): only the points of the BAN changed (`latitude`, `longitude`, `address_count` of the cities), or a fix of the code. The builder publishes it on Monday, at most once a week.
+- **Y** (4.2.1 to 4.3.0): anything else changed in the data of the builder (a row added or removed, another column modified). The builder publishes it at once. Z goes back to 0.
+- **X** (4.3.0 to 5.0.0): the layout of the files changed. Reviewed and tagged by hand.
 
 The first release is `4.0.0`, to follow the dataset it holds. The versions of the package and of the builder are not the same number: a fix of the code is a patch of the package only.
 
