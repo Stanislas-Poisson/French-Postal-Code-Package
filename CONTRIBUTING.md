@@ -43,7 +43,7 @@ composer analyse:laravel
 git checkout composer.json && composer install    # back to the plain package
 ```
 
-The Symfony adapter works the same way, with `scripts/install-symfony.sh 6.4|7.4|8.0`, `composer test:symfony` and `composer analyse:symfony`. Symfony 8 needs PHP 8.4. Do not install both frameworks in the same `vendor`.
+The Symfony adapter works the same way, with `scripts/install-symfony.sh 6.4|7.4|8.1`, `composer test:symfony` and `composer analyse:symfony`. Symfony 8 needs PHP 8.4. Do not install both frameworks in the same `vendor`.
 
 The adapter tests run on SQLite in memory. To run them on a server, as the `full-data` job of the CI does, start it and tell the tests where it is:
 
