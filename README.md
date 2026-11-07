@@ -164,7 +164,7 @@ Many applications already own a `cities` or a `regions` table, so the tables of 
 | | Supported |
 | :--- | :--- |
 | PHP | 8.3, 8.4 |
-| Symfony | 6.4 and 7.4, 8.0 (PHP 8.4) |
+| Symfony | 6.4 and 7.4, 8.1 (PHP 8.4) |
 | Doctrine | ORM 3 with DBAL 4, and DoctrineBundle 2 (Symfony 6.4 and 7) or 3 (Symfony 8) |
 | Databases | MySQL, MariaDB, PostgreSQL and SQLite |
 
