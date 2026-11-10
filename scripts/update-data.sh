@@ -13,8 +13,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION="${1:-latest}"
 
 if [ "$VERSION" = "latest" ]; then
-    VERSION="$(curl -fsSIL -o /dev/null -w '%{url_effective}' "https://github.com/$REPO/releases/latest")"
-    VERSION="${VERSION##*/}"
+  VERSION="$(curl -fsSIL -o /dev/null -w '%{url_effective}' "https://github.com/$REPO/releases/latest")"
+  VERSION="${VERSION##*/}"
 fi
 
 ARCHIVE="french-postal-code-$VERSION-package.zip"

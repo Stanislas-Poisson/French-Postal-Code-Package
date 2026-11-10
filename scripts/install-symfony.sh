@@ -9,29 +9,29 @@
 set -euo pipefail
 
 case "${1:-}" in
-    6.4) SYMFONY='6.4.*'; BUNDLE='^2.13' ;;
-    7.4) SYMFONY='7.4.*'; BUNDLE='^2.13' ;;
-    8.1) SYMFONY='8.1.*'; BUNDLE='^3.0' ;;
-    *)
-        echo "Usage: $0 6.4|7.4|8.1" >&2
-        exit 1
-        ;;
+  6.4) SYMFONY='6.4.*'; BUNDLE='^2.13' ;;
+  7.4) SYMFONY='7.4.*'; BUNDLE='^2.13' ;;
+  8.1) SYMFONY='8.1.*'; BUNDLE='^3.0' ;;
+  *)
+    echo "Usage: $0 6.4|7.4|8.1" >&2
+    exit 1
+    ;;
 esac
 
 # The quality tools are not part of the dependencies of a framework job: their requirements must not limit the
 # frameworks that the package supports. These jobs keep what they use: PHPStan with its extensions, and PHPUnit.
 composer remove --dev --no-interaction --no-update stanislas-poisson/php-dev-tools
 composer require --dev --no-interaction --no-update \
-    "phpstan/phpstan:^2.1" \
-    "phpstan/phpstan-phpunit:^2.0" \
-    "phpstan/phpstan-strict-rules:^2.0"
+  "phpstan/phpstan:^2.1" \
+  "phpstan/phpstan-phpunit:^2.0" \
+  "phpstan/phpstan-strict-rules:^2.0"
 
 composer require --dev --no-interaction --no-update \
-    "symfony/framework-bundle:$SYMFONY" \
-    "symfony/console:$SYMFONY" \
-    "doctrine/orm:^3.0" \
-    "doctrine/dbal:^4.0" \
-    "doctrine/doctrine-bundle:$BUNDLE" \
-    "symfony/var-exporter:$SYMFONY" \
-    "phpstan/phpstan-doctrine:^2.0"
+  "symfony/framework-bundle:$SYMFONY" \
+  "symfony/console:$SYMFONY" \
+  "doctrine/orm:^3.0" \
+  "doctrine/dbal:^4.0" \
+  "doctrine/doctrine-bundle:$BUNDLE" \
+  "symfony/var-exporter:$SYMFONY" \
+  "phpstan/phpstan-doctrine:^2.0"
 composer update --no-interaction --prefer-dist
