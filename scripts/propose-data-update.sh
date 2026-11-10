@@ -29,50 +29,50 @@ version="$(printf '%s\n' "$output" | sed -n 's/^Release \([^ ]*\) of .*/\1/p' | 
 
 # The archive does not say which release it comes from: keep it in the manifest, as it decides the next version.
 if [ -n "$version" ]; then
-    manifest_tmp="$(mktemp)"
-    jq --indent 4 --arg release "$version" '.builder_release = $release' data/manifest.json >"$manifest_tmp"
-    mv "$manifest_tmp" data/manifest.json
+  manifest_tmp="$(mktemp)"
+  jq --indent 4 --arg release "$version" '.builder_release = $release' data/manifest.json >"$manifest_tmp"
+  mv "$manifest_tmp" data/manifest.json
 fi
 
 if [ -z "$(git status --porcelain data)" ]; then
-    echo "data/ already holds the release $version: nothing to propose."
-    exit 0
+  echo "data/ already holds the release $version: nothing to propose."
+  exit 0
 fi
 
 summary() {
-    jq -r '"- INSEE COG: \(.cog_vintage)\n- La Poste: \(.laposte_version)\n- Generated: \(.generated_at)\n" + ([.tables | to_entries[] | "- \(.key): \(.value.rows) rows"] | join("\n"))' "$1"
+  jq -r '"- INSEE COG: \(.cog_vintage)\n- La Poste: \(.laposte_version)\n- Generated: \(.generated_at)\n" + ([.tables | to_entries[] | "- \(.key): \(.value.rows) rows"] | join("\n"))' "$1"
 }
 
 body="$(mktemp)"
 {
-    echo "The builder published the release $version of the dataset. \`scripts/update-data.sh\` replaced the files of \`data/\` with its package archive, after checking it against \`SHA256SUMS\`."
-    echo
-    echo "## New dataset"
-    echo
-    summary data/manifest.json
-    echo
-    echo "## Before"
-    echo
-    summary "$old_manifest"
-    echo
-    echo "## What to do"
-    echo
-    echo "- The CI checks the data against the schemas and the manifest."
-    if [ "${AUTO_MERGE:-false}" = "true" ]; then
-        echo "- When the CI passes, the pull request is merged by itself, then the workflow Release data brings it to main and tags the next minor version (a new dataset without change of layout, see the README)."
-    else
-        echo "- Choose the next version from the change of layout of the files (the SemVer rules are in the README), merge, then tag and publish as usual: this is not automatic."
-    fi
-    echo
-    echo "Part of #$ISSUE"
+  echo "The builder published the release $version of the dataset. \`scripts/update-data.sh\` replaced the files of \`data/\` with its package archive, after checking it against \`SHA256SUMS\`."
+  echo
+  echo "## New dataset"
+  echo
+  summary data/manifest.json
+  echo
+  echo "## Before"
+  echo
+  summary "$old_manifest"
+  echo
+  echo "## What to do"
+  echo
+  echo "- The CI checks the data against the schemas and the manifest."
+  if [ "${AUTO_MERGE:-false}" = "true" ]; then
+    echo "- When the CI passes, the pull request is merged by itself, then the workflow Release data brings it to main and tags the next minor version (a new dataset without change of layout, see the README)."
+  else
+    echo "- Choose the next version from the change of layout of the files (the SemVer rules are in the README), merge, then tag and publish as usual: this is not automatic."
+  fi
+  echo
+  echo "Part of #$ISSUE"
 } >"$body"
 
 if $DRY_RUN; then
-    echo "--- dry run: a pull request would be opened with this description ---"
-    cat "$body"
-    git checkout -- data
-    git clean -fdq data
-    exit 0
+  echo "--- dry run: a pull request would be opened with this description ---"
+  cat "$body"
+  git checkout -- data
+  git clean -fdq data
+  exit 0
 fi
 
 branch="chore/data-$version"
@@ -85,14 +85,14 @@ git commit -q -m "chore(data): #$ISSUE update data/ to the release $version of t
 git push -q origin "$branch"
 
 gh pr create --base "$BASE_BRANCH" --head "$branch" \
-    --title "chore(data): #$ISSUE update data/ to the release $version of the builder" \
-    --body-file "$body"
+  --title "chore(data): #$ISSUE update data/ to the release $version of the builder" \
+  --body-file "$body"
 
 if [ "${AUTO_MERGE:-false}" = "true" ]; then
-    # Opened with the token of the maintainer, the pull request starts the CI by itself: merge it when the CI passes.
-    gh pr merge "$branch" --auto --merge
+  # Opened with the token of the maintainer, the pull request starts the CI by itself: merge it when the CI passes.
+  gh pr merge "$branch" --auto --merge
 else
-    # A pull request opened with the token of a workflow does not start the other workflows (GitHub's
-    # rule against loops), except by dispatch: start the CI by hand so that the required check runs.
-    gh workflow run ci.yml --ref "$branch"
+  # A pull request opened with the token of a workflow does not start the other workflows (GitHub's
+  # rule against loops), except by dispatch: start the CI by hand so that the required check runs.
+  gh workflow run ci.yml --ref "$branch"
 fi
